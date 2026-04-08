@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <base target="_top">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Expense Tracker Beta v3.0</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
+    <link href="css/styles.css" rel="stylesheet">
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    <style>
+      .dashboard-totals { display: flex; gap: 16px; margin-bottom: 20px; flex-wrap: wrap; }
+      .total-box { flex: 1; min-width: 150px; background: linear-gradient(135deg, var(--primary-color) 0%, #6366f1 100%); padding: 24px; border-radius: 20px; text-align: center; color: #fff; box-shadow: 0 10px 20px rgba(124, 58, 237, 0.2);}
+      .total-box.cyan { background: linear-gradient(135deg, var(--secondary-color) 0%, #0ea5e9 100%); box-shadow: 0 10px 20px rgba(45, 212, 191, 0.2); }
+      .total-box span { display: block; font-size: 13px; opacity: 0.8; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 1px; font-weight: 500;}
+      .total-box strong { font-size: 28px; font-weight: 700; }
+      .data-list { max-height: 400px; overflow-y: auto; }
+      .data-item { display: flex; justify-content: space-between; align-items: center; padding: 16px; border-bottom: 1px solid var(--border-color); transition: background 0.2s; border-radius: 8px;}
+      .data-item:hover { background: var(--bg-color); }
+      .charts-wrapper { display: flex; flex-wrap: wrap; gap: 20px; }
+      .chart-container { flex: 1; min-width: 100%; height: 300px; }
+      @media (min-width: 600px) { .chart-container { min-width: 48%; } }
+      .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.4); z-index: 2000; display: none; justify-content: center; align-items: center; padding: 20px; box-sizing: border-box; backdrop-filter: blur(4px);}
+      .modal { background: var(--surface-color); width: 100%; max-width: 400px; border-radius: 20px; padding: 24px; box-shadow: 0 25px 50px rgba(0,0,0,0.15);}
+    </style>
+  </head>
+  <body>
+
+    <!-- TOP APP HEADER -->
+    <div class="top-header">
+      <div class="profile-pic" id="profile-container">
+        <div id="profile-letter" style="display:none;">U</div>
+        <img id="user-photo" src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?q=80&w=256&h=256&auto=format&fit=crop" class="profile-img" alt="User">
+      </div>
+      <div class="header-titles">
+         <p id="greeting-text">Good Morning,</p>
+         <h1 id="display-name">Username</h1>
+         <p id="daily-quote" style="font-size:11px; font-style:italic; margin-top:4px; color:var(--text-secondary);"></p>
+      </div>
+      <div style="display:flex; gap:16px; align-items:center;">
+          <div class="bell-icon" onclick="syncToSheets()" title="Sync Data">
+             <span class="material-icons" style="font-size:28px;">notifications_none</span>
+             <div class="bell-dot" id="sync-dot"></div>
+          </div>
+          <span class="material-icons pill" onclick="logout()" style="cursor:pointer; color:var(--text-secondary); font-size:24px; background:var(--bg-color); padding:8px; border-radius:12px;">logout</span>
+      </div>
+    </div>
+
+    <!-- NOTIFICATIONS -->
+    <div style="width: 100%; max-width: 800px; padding: 0 20px; box-sizing: border-box; text-align: center;">
+      <div id="global-msg" class="message-box"></div>
+    </div>
+
+    <!-- MAIN APP CONTENT -->
+    <div class="container" id="main-container">
+      
+      <!-- DASHBOARD TAB -->
+      <div id="dashboard" class="tab-content active">
+        
+        <!-- V5 Time Pills -->
+        <div class="time-pills">
+           <button class="pill active">All</button>
+           <button class="pill">Day</button>
+           <button class="pill">Week</button>
+           <button class="pill">Month</button>
+        </div>
+
+        <!-- V5 Balance Card (Aqua Mint) -->
+        <div class="v5-card-balance">
+           <div style="flex:1;">
+               <span style="font-size:13px; opacity:0.8; font-weight:600;">My Balance</span>
+               <div style="font-size:32px; font-weight:700; margin-top:4px;" id="cc-total-balance">₹0.00</div>
+           </div>
+           <div style="display:flex; flex-direction:column; align-items:flex-end; gap:12px;">
+               <div class="circle-graph" id="v5-balance-pct" data-pct="100%"></div>
+               <button class="arrow-btn" onclick="openAddModal()"><span class="material-icons" style="font-size:20px;">call_made</span></button>
+           </div>
+        </div>
+
+        <!-- V5 Spent Card (White) -->
+        <div class="v5-card-spent">
+           <div style="flex:1;">
+               <span style="font-size:13px; color:var(--text-secondary); font-weight:600;">Total Spent</span>
+               <div style="font-size:28px; font-weight:700; margin-top:4px; color:var(--text-primary);" id="mini-month">-₹0.00</div>
+           </div>
+           <div style="display:flex; flex-direction:column; align-items:flex-end; gap:12px;">
+               <div class="circle-graph" id="v5-spent-pct" data-pct="0%"></div>
+               <button class="arrow-btn" onclick="switchTab('history')"><span class="material-icons" style="font-size:20px;">call_made</span></button>
+           </div>
+        </div>
+
+        <!-- Analytics -->
+        <div class="section-title">
+           <h2>Analytics</h2> <a href="#" onclick="switchTab('history')">View All</a>
+        </div>
+        <div class="card" style="padding:0; overflow:hidden;">
+           <div class="chart-container" id="piechart" style="height:250px;"></div>
+        </div>
+
+        <!-- Recent Transactions Preview -->
+        <div class="section-title" style="margin-top:24px;">
+           <h2>Recent Transactions</h2> <a href="#" onclick="switchTab('history')">View All</a>
+        </div>
+        <div class="data-list" id="recent-transaction-list" style="margin-bottom: 20px;"></div>
+
+      </div>
+
+      <!-- HISTORY TAB -->
+      <div id="history" class="tab-content">
+        <h2 style="font-size:24px; font-weight:700; margin-bottom: 20px;">Ledger History</h2>
+        <div class="card" style="padding:10px;">
+          <div class="data-list" id="transaction-list"></div>
+        </div>
+      </div>
+
+      <!-- EVENTS TAB -->
+      <div id="events" class="tab-content">
+        <h2 style="font-size:24px; font-weight:700; margin-bottom: 20px;">Active Projects</h2>
+        <button onclick="document.getElementById('event-form-area').style.display='block'" class="secondary">Create / Edit Event</button>
+        <div id="event-form-area" style="display: none; margin-top: 20px; background:var(--surface-color); padding:20px; border-radius:16px;">
+          <form onsubmit="submitEvent(event)">
+            <div class="form-group"><label>Event Name</label><input type="text" id="ev-name" required></div>
+            <div class="form-group"><label>Total Cash</label><input type="number" id="ev-total" required></div>
+            <div class="form-group"><label>Budget Target</label><input type="number" id="ev-budget" required></div>
+            <button type="submit">Save Project</button>
+          </form>
+        </div>
+        <div id="event-list-container" style="margin-top:20px;"></div>
+      </div>
+
+      <!-- PREMIUM TAB -->
+      <div id="premium" class="tab-content">
+        <div style="text-align:center; padding: 40px 20px;">
+           <div style="font-size:80px; margin-bottom:20px;">👑</div>
+           <h2 style="font-size:28px; font-weight:800; color:var(--text-primary); margin-bottom:12px;">Paisa Flow Premium</h2>
+           <p style="color:var(--text-secondary); line-height:1.6; margin-bottom:30px;">Elevate your financial intelligence with enterprise-grade tools. Coming very soon.</p>
+           
+           <div class="card" style="background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%); border:none; text-align:left;">
+              <h3 style="margin:0; font-size:18px; color:#92400e; display:flex; align-items:center; gap:8px;"><span class="material-icons">auto_awesome</span> Pro Features Preview</h3>
+              <ul style="margin:20px 0 0 0; padding:0; list-style:none; display:grid; gap:16px;">
+                 <li style="display:flex; align-items:center; gap:10px; color:#92400e; font-weight:500;">
+                    <span class="material-icons" style="font-size:20px;">sync_lock</span> Global Real-time Multi-User Sync
+                 </li>
+                 <li style="display:flex; align-items:center; gap:10px; color:#92400e; font-weight:500;">
+                    <span class="material-icons" style="font-size:20px;">query_stats</span> AI-Powered Spending Predictions
+                 </li>
+                 <li style="display:flex; align-items:center; gap:10px; color:#92400e; font-weight:500;">
+                    <span class="material-icons" style="font-size:20px;">picture_as_pdf</span> PDF/Excel Professional Reporting
+                 </li>
+              </ul>
+           </div>
+           
+           <button style="margin-top:20px; background:#92400e; color:white; border-radius:16px;">Join Waitlist</button>
+        </div>
+      </div>
+
+      <!-- ADMIN TAB (Hidden for Users) -->
+      <div id="admin" class="tab-content">
+        <div class="card" style="border: 2px solid var(--danger-color); padding: 24px;">
+           <h2 style="color: var(--danger-color); border:none; margin:0;"><span class="material-icons" style="margin-right:8px; vertical-align:middle;">admin_panel_settings</span> Platform Telemetry</h2>
+           <div class="form-group" style="max-width: 400px; margin-top:20px;">
+             <label>Session Passcode</label>
+             <div style="display:flex; gap:10px;">
+                <input type="password" id="admin-passcode" placeholder="Enter Auth Token">
+                <button onclick="loadAdminDashboard()" class="danger" id="load-admin-btn" style="width:auto; padding: 0 20px;">Connect</button>
+             </div>
+           </div>
+           
+           <div id="admin-telemetry-grid" style="display:none; gap:12px; margin: 24px 0; flex-wrap:wrap;">
+             <div class="total-box" style="padding:16px;"><span>Live Users</span><strong id="admin-tel-users">---</strong></div>
+             <div class="total-box cyan" style="padding:16px;"><span>OTP Pending</span><strong id="admin-tel-pending">---</strong></div>
+             <div class="total-box" style="padding:16px; background:linear-gradient(135deg, var(--danger-color) 0%, #be123c 100%);"><span>Global TX Vol.</span><strong id="admin-tel-tx">---</strong></div>
+             <div class="total-box cyan" style="padding:16px; background:linear-gradient(135deg, #f59e0b 0%, #d97706 100%);"><span>Active Projects</span><strong id="admin-tel-ev">---</strong></div>
+           </div>
+
+           <div id="admin-user-list-container" style="display:none;">
+             <div id="admin-user-list" class="data-list" style="max-height:400px;"></div>
+           </div>
+        </div>
+      </div>
+
+    </div> <!-- End Container -->
+
+    <!-- FLOATING ACTION BUTTON & BOTTOM NAV -->
+    <div class="nav-fab-holder">
+       <div class="fab" onclick="openAddModal()">
+          <span class="material-icons">add</span>
+       </div>
+    </div>
+    
+    <div class="bottom-nav">
+       <div class="nav-item active" onclick="switchTab('dashboard', this)">
+          <span class="material-icons">apps</span> Home
+       </div>
+       <div class="nav-item" onclick="switchTab('history', this)">
+          <span class="material-icons">list_alt</span> History
+       </div>
+       
+       <div class="nav-fab-holder">
+           <!-- Space for FAB -->
+       </div>
+
+       <div class="nav-item" onclick="switchTab('events', this)">
+          <span class="material-icons">rocket_launch</span> Events
+       </div>
+       <div class="nav-item" onclick="switchTab('premium', this)">
+          <span class="material-icons" style="color:#d97706;">workspace_premium</span> Premium
+       </div>
+    </div>
+
+    <!-- ADD EXPENSE MODAL OVERLAY -->
+    <div class="add-modal-overlay" id="add-modal">
+       <div class="add-modal">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
+             <h2 style="margin:0; font-size:22px; font-weight:700;">Add Transaction</h2>
+             <span class="material-icons" style="cursor:pointer; color:var(--text-secondary);" onclick="closeAddModal()">close</span>
+          </div>
+          <form id="transaction-form" onsubmit="submitTransaction(event)">
+            <input type="hidden" id="tx-id-input" value="">
+            
+            <div style="display:grid; grid-template-columns: 1fr 1fr; gap:12px;">
+               <div class="form-group"><label>Type</label><select id="tx-type" name="type" required><option value="Expense">Expense</option><option value="Income">Income</option></select></div>
+               <div class="form-group"><label>Date (Auto)</label><input type="date" id="tx-date" name="date" required></div>
+            </div>
+            
+            <div class="form-group">
+               <label>Amount (₹)</label>
+               <input type="number" id="tx-amount" name="amount" step="0.01" required style="font-size:32px !important; font-weight:700; color:var(--primary-color);">
+            </div>
+            
+            <div class="form-group">
+               <label>Category</label>
+               <select id="tx-category" name="category" required>
+                  <option value="Food 🍔">Food 🍔</option>
+                  <option value="Travel 🚗">Travel 🚗</option>
+                  <option value="Shopping 🛍️">Shopping 🛍️</option>
+                  <option value="Bills 💡">Bills 💡</option>
+                  <option value="Health 🏥">Health 🏥</option>
+                  <option value="Income 💰">Income 💰</option>
+                  <option value="Other 📌">Other 📌</option>
+               </select>
+            </div>
+            
+            <div style="display:grid; grid-template-columns: 1fr 1fr; gap:12px;">
+               <div class="form-group">
+                  <label>Payment Method</label>
+                  <select id="tx-method" name="method" required>
+                     <option value="UPI">UPI</option><option value="Card">Card</option><option value="Cash">Cash</option>
+                  </select>
+               </div>
+               <div class="form-group"><label>Event Link</label><select id="tx-event-selector" name="eventName"></select></div>
+            </div>
+
+            <div class="form-group"><label>Notes</label><textarea id="tx-notes" name="notes" rows="2" placeholder="Optional notes..."></textarea></div>
+            
+            <button type="submit" id="tx-btn" style="height:55px; border-radius:16px;">Save to Ledger</button>
+          </form>
+       </div>
+    </div>
+
+    <!-- EDIT/DELETE MODAL -->
+    <div class="modal-overlay" id="edit-modal">
+       <div class="modal">
+         <h2>Modify Entry</h2>
+         <div style="display: flex; gap: 12px; margin-top: 24px;">
+            <button onclick="editSelectedTx()" class="secondary">Edit Entry</button>
+            <button onclick="deleteSelectedTx()" class="danger">Delete</button>
+         </div>
+         <button onclick="closeEditModal()" class="outline" style="margin-top: 12px; color:var(--text-secondary); border:none;">Cancel</button>
+       </div>
+    </div>
+
+    <script src="js/api.js"></script>
+    <script src="js/app.js"></script>
+  </body>
+</html>
