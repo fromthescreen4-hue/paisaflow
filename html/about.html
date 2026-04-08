@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <base target="_top">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Paisa Flow - Elite Financial Suite</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link href="../css/styles.css" rel="stylesheet">
+    <style>
+      body {
+        margin: 0;
+        background: radial-gradient(circle at top, #ffffff 0%, #f1f5f9 100%);
+        position: relative;
+        overflow-x: hidden;
+      }
+
+      /* Premium Textures */
+      .bg-texture {
+        position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+        background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+        opacity: 0.02; pointer-events: none; z-index: 0;
+      }
+
+      .grid-overlay {
+        position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+        background-size: 40px 40px;
+        background-image: linear-gradient(to right, rgba(45, 212, 191, 0.02) 1px, transparent 1px),
+                          linear-gradient(to bottom, rgba(45, 212, 191, 0.02) 1px, transparent 1px);
+        z-index: 0;
+      }
+
+      .doc-card { 
+        background: rgba(255, 255, 255, 0.7); 
+        backdrop-filter: blur(20px); 
+        padding: 32px; 
+        border-radius: 24px; 
+        text-align: left; 
+        box-shadow: 0 10px 40px rgba(0,0,0,0.03); 
+        margin-bottom: 24px;
+        border: 1px solid rgba(255,255,255,0.4);
+        position: relative;
+        z-index: 1;
+        animation: fadeUp 0.6s ease;
+      }
+      .doc-card h3 { color: var(--primary-color); display: flex; align-items: center; gap: 10px; margin-top: 0; font-weight: 700;}
+      @keyframes fadeUp { from { opacity:0; transform: translateY(20px); } to { opacity:1; transform: translateY(0); } }
+    </style>
+  </head>
+  <body>
+    <div class="bg-texture"></div>
+    <div class="grid-overlay"></div>
+    <div class="app-bar" style="background: rgba(255,255,255,0.7); backdrop-filter: blur(10px); border-bottom: 1px solid var(--border-color);">
+      <h1 onclick="window.location.href='../index.html'" style="cursor:pointer; color:var(--text-primary);"><span class="material-icons" style="vertical-align:bottom;">arrow_back</span> Return to Login</h1>
+    </div>
+
+    <div class="container" style="display:block; padding-top:40px;">
+      <div style="text-align:center; margin-bottom:40px;">
+        <h2 style="font-size:32px; font-weight:700; margin-bottom:10px;"><span class="app-name-display"></span> Architecture</h2>
+        <p style="color:var(--text-secondary);">How <span class="app-name-display"></span> <span class="app-version-display"></span> applies enterprise-grade securities natively.</p>
+      </div>
+
+      <div class="doc-card">
+         <h3><span class="material-icons">architecture</span> Local-First Progressive Design</h3>
+         <p style="color:var(--text-secondary); line-height:1.6;">Paisa Flow is constructed as a secure Multi-Page progressive web app. Every transaction you add is processed instantly via your device's <b>Local Database Engine</b>. This guarantees zero latency and allows you to use the manager completely offline when on a film set or out buying supplies.</p>
+      </div>
+
+      <div class="doc-card">
+         <h3><span class="material-icons">lock</span> Dual Authentication Pipelines</h3>
+         <p style="color:var(--text-secondary); line-height:1.6;">Your financial ledger interacts exclusively through a verified Google API bridge. New accounts pass through a strict <b>OTP Verification Check</b> delivered straight to the end-user's inbox. Once verified, passwords are hashed securely against Google Sheets, and any new login attempts broadcast an IP Geolocation alarm to your email, locking out intruders permanently.</p>
+      </div>
+    </div>
+  </body>
+</html>
