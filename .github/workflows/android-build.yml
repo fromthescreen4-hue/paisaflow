@@ -3,7 +3,7 @@ name: Paisa Flow Hybrid Native Build
 on:
   push:
     branches:
-      - main
+      - dev
 
 jobs:
   build:
