@@ -24,6 +24,15 @@
       @media (min-width: 600px) { .chart-container { min-width: 48%; } }
       .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.4); z-index: 2000; display: none; justify-content: center; align-items: center; padding: 20px; box-sizing: border-box; backdrop-filter: blur(4px);}
       .modal { background: var(--surface-color); width: 100%; max-width: 400px; border-radius: 20px; padding: 24px; box-shadow: 0 25px 50px rgba(0,0,0,0.15);}
+
+      .dev-vault-btn {
+        background: rgba(15, 23, 42, 0.05); color: var(--text-secondary);
+        padding: 8px 16px; border-radius: 20px; font-size: 11px;
+        text-decoration: none; font-weight: 700; letter-spacing: 1px;
+        display: flex; align-items: center; gap: 6px; margin: 20px auto;
+        width: fit-content; transition: all 0.3s; border: 1px solid rgba(0,0,0,0.05);
+      }
+      .dev-vault-btn:hover { background: var(--text-primary); color: white; }
     </style>
   </head>
   <body>
@@ -99,15 +108,9 @@
            <div class="chart-container" id="piechart" style="height:250px;"></div>
         </div>
 
-        <!-- History Preview -->
-        <div class="section-title">
-           <h2>Recent</h2> <a href="#" onclick="switchTab('history')">History</a>
-        </div>
-        <div class="card" style="padding:0;">
-          <div id="mini-history" class="data-list">
-             <div style="padding:40px; text-align:center; color:var(--text-secondary);">No recent data</div>
-          </div>
-        </div>
+        <a href="https://fromthescreen4-hue.github.io/paisaflow/#" class="dev-vault-btn">
+            <span class="material-icons" style="font-size:16px;">code</span> DEV VAULT REDIRECT
+        </a>
       </div>
       
       <!-- HISTORY TAB -->
@@ -145,11 +148,7 @@
         <div class="nav-item" onclick="switchTab('history', this)">
            <span class="material-icons">history</span> Ledger
         </div>
-        
-        <div class="nav-fab-holder">
-            <!-- Space for FAB -->
-        </div>
-
+        <div class="nav-fab-holder"></div>
         <div class="nav-item" onclick="switchTab('events', this)">
            <span class="material-icons">rocket_launch</span> Events
         </div>
@@ -167,60 +166,29 @@
           </div>
           <form id="transaction-form" onsubmit="submitTransaction(event)">
             <input type="hidden" id="tx-id-input" value="">
-            
-            <div style="display:grid; grid-template-columns: 1fr 1fr; gap:12px;">
-               <div class="form-group"><label>Type</label><select id="tx-type" name="type" required><option value="Expense">Expense</option><option value="Income">Income</option></select></div>
-               <div class="form-group"><label>Date (Auto)</label><input type="date" id="tx-date" name="date" required></div>
-            </div>
-            
-            <div class="form-group">
-               <label>Amount (₹)</label>
-               <input type="number" id="tx-amount" name="amount" step="0.01" required style="font-size:32px !important; font-weight:700; color:var(--primary-color);">
-            </div>
-            
-            <div class="form-group">
-               <label>Category</label>
-               <select id="tx-category" name="category" required>
-                  <option value="Food 🍔">Food 🍔</option>
-                  <option value="Travel 🚗">Travel 🚗</option>
-                  <option value="Shopping 🛍️">Shopping 🛍️</option>
-                  <option value="Bills 💡">Bills 💡</option>
-                  <option value="Health 🏥">Health 🏥</option>
-                  <option value="Income 💰">Income 💰</option>
-                  <option value="Other 📌">Other 📌</option>
-               </select>
-            </div>
-            
-            <div style="display:grid; grid-template-columns: 1fr 1fr; gap:12px;">
-               <div class="form-group">
-                  <label>Payment Method</label>
-                  <select id="tx-method" name="method" required>
-                     <option value="UPI">UPI</option><option value="Card">Card</option><option value="Cash">Cash</option>
-                  </select>
-               </div>
-               <div class="form-group"><label>Event Link</label><select id="tx-event-selector" name="eventName"></select></div>
-            </div>
-
+            <div style="display:grid; grid-template-columns: 1fr 1fr; gap:12px;"><div class="form-group"><label>Type</label><select id="tx-type" name="type" required><option value="Expense">Expense</option><option value="Income">Income</option></select></div><div class="form-group"><label>Date (Auto)</label><input type="date" id="tx-date" name="date" required></div></div>
+            <div class="form-group"><label>Amount (₹)</label><input type="number" id="tx-amount" name="amount" step="0.01" required style="font-size:32px !important; font-weight:700; color:var(--primary-color);"></div>
+            <div class="form-group"><label>Category</label><select id="tx-category" name="category" required><option value="Food 🍔">Food 🍔</option><option value="Travel 🚗">Travel 🚗</option><option value="Shopping 🛍️">Shopping 🛍️</option><option value="Bills 💡">Bills 💡</option><option value="Health 🏥">Health 🏥</option><option value="Income 💰">Income 💰</option><option value="Other 📌">Other 📌</option></select></div>
+            <div style="display:grid; grid-template-columns: 1fr 1fr; gap:12px;"><div class="form-group"><label>Payment Method</label><select id="tx-method" name="method" required><option value="UPI">UPI</option><option value="Card">Card</option><option value="Cash">Cash</option></select></div><div class="form-group"><label>Event Link</label><select id="tx-event-selector" name="eventName"></select></div></div>
             <div class="form-group"><label>Notes</label><textarea id="tx-notes" name="notes" rows="2" placeholder="Optional notes..."></textarea></div>
-            
             <button type="submit" id="tx-btn" style="height:55px; border-radius:16px;">Save to Ledger</button>
           </form>
        </div>
     </div>
 
-    <!-- EDIT/DELETE MODAL -->
-    <div class="modal-overlay" id="edit-modal">
-       <div class="modal">
-          <h2>Modify Entry</h2>
-          <div style="display: flex; gap: 12px; margin-top: 24px;">
-             <button onclick="editSelectedTx()" class="secondary">Edit Entry</button>
-             <button onclick="deleteSelectedTx()" class="danger">Delete</button>
-          </div>
-          <button onclick="closeEditModal()" class="outline" style="margin-top: 12px; color:var(--text-secondary); border:none;">Cancel</button>
-       </div>
+    <!-- VAULT LOCK OVERLAY -->
+    <div id="vault-lock-overlay">
+       <img src="assets/img/logo.png" style="width:120px; margin-bottom: 24px;">
+       <h2 style="font-weight:700; color:var(--text-primary); margin:0;">Vault Locked</h2>
+       <p style="color:var(--text-secondary); font-size:14px; margin: 8px 0 24px;">Confirm identity to reveal ledger</p>
+       <div class="pin-display" id="lock-pin-display"><div class="pin-dot"></div><div class="pin-dot"></div><div class="pin-dot"></div><div class="pin-dot"></div></div>
+       <div class="pin-pad" id="lock-pin-pad"></div>
+       <a href="#" onclick="VaultSecurity.forgotPin()" style="margin-top:32px; color:var(--text-secondary); font-size:13px; text-decoration:none; font-weight:600;">Forgot PIN?</a>
     </div>
 
     <script src="js/api.js"></script>
     <script src="js/app.js"></script>
+    <script src="js/native-bridge.js"></script>
+    <script src="js/security.js"></script>
   </body>
 </html>
