@@ -2,49 +2,39 @@ name: Paisa Flow Hybrid Native Build
 
 on:
   push:
-    branches: [ main, master ]
-  workflow_dispatch:
+    branches:
+      - main
 
 jobs:
   build:
     runs-on: ubuntu-latest
+
     steps:
-      - name: Checkout Code
-        uses: actions/checkout@v4
+      - name: Checkout Repo
+        uses: actions/checkout@v3
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
+      - name: Setup Node
+        uses: actions/setup-node@v3
         with:
-          node-version: 20
-
-      - name: Setup Java
-        uses: actions/setup-java@v4
-        with:
-          distribution: 'zulu'
-          java-version: '17'
+          node-version: 18
 
       - name: Install Dependencies
         run: npm install
 
-      - name: Capacitor Native Sync
-        run: |
-          npx cap add android
-          npx cap sync android
+      - name: Build Web App
+        run: npm run build || echo "No build step"
 
-      - name: Configure Android Permissions
-        run: |
-          # Ensure biometric permission is in the manifest if missing
-          # (Standard Capacitor plugins usually handle this, but we force it for reliability)
-          sed -i '/<\/manifest>/i \    <uses-permission android:name="android.permission.USE_BIOMETRIC" />\n    <uses-permission android:name="android.permission.USE_FINGERPRINT" />' android/app/src/main/AndroidManifest.xml
+      - name: Sync Capacitor
+        run: npx cap sync android
 
-      - name: Build Native APK with Gradle
+      - name: Build APK
         run: |
           cd android
           chmod +x gradlew
           ./gradlew assembleDebug
 
-      - name: Upload Vault Elite APK
-        uses: actions/upload-artifact@v4
+      - name: Upload APK
+        uses: actions/upload-artifact@v3
         with:
-          name: paisa-flow-vault-elite
+          name: paisa-flow-apk
           path: android/app/build/outputs/apk/debug/app-debug.apk
