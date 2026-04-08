@@ -7,11 +7,7 @@
   <title>Paisa Flow - V5 Mint</title>
   <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-  <link rel="manifest" href="manifest.json">
-  <link rel="icon" type="image/png" href="assets/img/logo copy.png">
-  <link rel="apple-touch-icon" href="assets/img/logo copy.png">
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <link rel="icon" type="image/png" href="assets/img/logo.png">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
   <link href="css/styles.css" rel="stylesheet">
   <style>
@@ -239,23 +235,6 @@
     <div class="splash-glow"></div>
   </div>
 
-  <script>
-    if ('serviceWorker' in navigator) {
-      window.addEventListener('load', () => {
-        navigator.serviceWorker.register('sw.js').then(reg => {
-          reg.addEventListener('updatefound', () => {
-            const newWorker = reg.installing;
-            newWorker.addEventListener('statechange', () => {
-              if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
-                window.dispatchEvent(new CustomEvent('app-update-available'));
-              }
-            });
-          });
-        });
-      });
-    }
-  </script>
-
   <!-- Intro / Getting Started Screen -->
   <div id="intro-screen"
     style="display:none; flex-direction:column; justify-content:center; align-items:center; height:100vh; padding:30px; text-align:center; background: radial-gradient(circle at top, #ffffff 0%, #dff6f3 100%);">
@@ -355,60 +334,11 @@
         <div id="auth-msg" class="message-box"></div>
       </div>
     </div>
+  </div>
 
-    <!-- Scripts -->
-    <script src="js/api.js"></script>
-    <script src="js/auth.js"></script>
-    <script src="js/security.js"></script>
-
-    <!-- VAULT LOCK OVERLAY -->
-    <div id="vault-lock-overlay">
-      <img src="assets/img/logo copy.png" style="width:120px; margin-bottom: 24px;">
-      <h2 style="font-weight:700; color:var(--text-primary); margin:0;">Vault Locked</h2>
-      <p style="color:var(--text-secondary); font-size:14px; margin: 8px 0 24px;">Confirm identity to reveal ledger</p>
-
-      <div class="pin-display" id="lock-pin-display">
-        <div class="pin-dot"></div>
-        <div class="pin-dot"></div>
-        <div class="pin-dot"></div>
-        <div class="pin-dot"></div>
-      </div>
-
-      <div class="pin-pad" id="lock-pin-pad"></div>
-
-      <a href="#" onclick="VaultSecurity.forgotPin()"
-        style="margin-top:32px; color:var(--text-secondary); font-size:13px; text-decoration:none; font-weight:600;">Forgot
-        PIN?</a>
-    </div>
-
-    <!-- SECURITY SETUP OVERLAY -->
-    <div id="security-setup-overlay">
-      <div style="font-size:48px; margin-bottom:20px;">🛡️</div>
-      <h2 style="font-weight:800; color:var(--text-primary); margin:0;">Secure Your Vault</h2>
-      <p style="color:var(--text-secondary); font-size:14px; margin: 12px 0 32px; text-align:center;">Register a 4-digit
-        PIN for instant local access.</p>
-
-      <div class="pin-display" id="setup-pin-display">
-        <div class="pin-dot"></div>
-        <div class="pin-dot"></div>
-        <div class="pin-dot"></div>
-        <div class="pin-dot"></div>
-      </div>
-
-      <div class="pin-pad" id="setup-pin-pad"></div>
-    </div>
-
-    <!-- UPDATE BANNER -->
-    <div id="app-update-banner">
-      <div class="update-info">
-        <span class="material-icons">system_update</span>
-        <div>
-          <div style="font-weight:700; font-size:14px;">Update Available</div>
-          <div style="font-size:11px; opacity:0.8;">New version detected in vault.</div>
-        </div>
-      </div>
-      <div class="update-btn" onclick="VaultSecurity.forceUpdate()">UPDATE NOW</div>
-    </div>
+  <!-- Scripts -->
+  <script src="js/api.js"></script>
+  <script src="js/auth.js"></script>
 </body>
 
 </html>
