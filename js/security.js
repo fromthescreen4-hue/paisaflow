@@ -1,4 +1,4 @@
-// js/security.js - Paisa Flow Vault Security Core
+// js/security.js - Paisa Flow Vault Security Core (Native Capacitor Edition)
 
 const VaultSecurity = {
     PIN_HASH_KEY: 'paisa_flow_vault_pin',
@@ -6,7 +6,7 @@ const VaultSecurity = {
     SESSION_UNLOCKED: 'vault_session_unlocked',
     
     init() {
-        console.log("Vault Security Initializing...");
+        console.log("Vault Security Initializing [Native Bridge]...");
         this.setupUpdateListener();
         
         // Immediately check if we need to lock the app
@@ -38,8 +38,7 @@ const VaultSecurity = {
         const isUnlocked = sessionStorage.getItem(this.SESSION_UNLOCKED);
 
         if (!isRegistered) {
-            // New User: Require Security Registration after cloud login
-            console.log("Security Registration required for new user.");
+            console.log("First launch: Native Security Registration required.");
             return; 
         }
 
@@ -54,9 +53,9 @@ const VaultSecurity = {
             overlay.style.display = 'flex';
             this.renderPinPad('lock-pin-display', 'lock-pin-pad', (pin) => this.verifyUnlock(pin));
             
-            // Auto-trigger biometrics if enabled
+            // Auto-trigger native biometrics if enabled
             if (localStorage.getItem(this.BIO_ENABLED_KEY) === 'true') {
-                this.triggerBiometrics();
+                setTimeout(() => this.triggerBiometrics(), 500);
             }
         }
     },
@@ -119,15 +118,38 @@ const VaultSecurity = {
     },
 
     async triggerBiometrics() {
-        if (window.PublicKeyCredential) {
-            try {
-                const available = await PublicKeyCredential.isUserVerifyingPlatformAuthenticatorAvailable();
-                if (available) {
-                    this.verifyUnlock("BIOMETRIC_SUCCESS");
-                }
-            } catch (e) {
-                console.error("Biometric challenge failed", e);
-            }
+        // NATIVE BRIDGE: Checking for Capacitor Biometrics
+        const isNative = typeof window.Capacitor !== 'undefined';
+        
+        if (isNative) {
+           try {
+              // Using NativeBiometric Plugin
+              const result = await window.Capacitor.Plugins.NativeBiometric.verify({
+                 reason: "Authenticate to unlock the Paisa Flow Vault",
+                 title: "Secure Authentication",
+                 subtitle: "Confirm identity to reveal ledger",
+                 description: "Fingerprint or FaceID required.",
+              });
+              
+              if (result) {
+                 this.verifyUnlock("BIOMETRIC_SUCCESS");
+              }
+           } catch (e) {
+              console.warn("Native Biometric challenge failed or cancelled", e);
+           }
+        } else {
+           // Fallback for Web/PWA mode (WebAuthn)
+           console.log("Web Mode: Using browser-level biometrics.");
+           if (window.PublicKeyCredential) {
+              try {
+                  const available = await PublicKeyCredential.isUserVerifyingPlatformAuthenticatorAvailable();
+                  if (available) {
+                      this.verifyUnlock("BIOMETRIC_SUCCESS");
+                  }
+              } catch (e) {
+                  console.error("Biometric challenge failed", e);
+              }
+           }
         }
     },
 
@@ -149,7 +171,7 @@ const VaultSecurity = {
     finalizeRegistration(pin) {
         const hash = CryptoJS.SHA256(pin).toString();
         localStorage.setItem(this.PIN_HASH_KEY, hash);
-        localStorage.setItem(this.BIO_ENABLED_KEY, 'true');
+        localStorage.setItem(this.BIO_ENABLED_KEY, 'true'); 
         
         sessionStorage.setItem(this.SESSION_UNLOCKED, 'true');
         const overlay = document.getElementById('security-setup-overlay');
