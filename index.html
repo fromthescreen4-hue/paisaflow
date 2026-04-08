@@ -4,9 +4,14 @@
 <head>
   <base target="_top">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Expense Tracker Beta v3.0</title>
+  <title>Paisa Flow - V5 Mint</title>
   <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <link rel="manifest" href="manifest.json">
+  <link rel="icon" type="image/png" href="assets/img/logo copy.png">
+  <link rel="apple-touch-icon" href="assets/img/logo copy.png">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
   <link href="css/styles.css" rel="stylesheet">
   <style>
@@ -98,6 +103,26 @@
       z-index: 9999;
       transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1);
     }
+    .splash-logo-container {
+      animation: logoIntro 1.2s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+      opacity: 0;
+      transform: scale(0.5);
+    }
+    @keyframes logoIntro {
+      to { opacity: 1; transform: scale(1); }
+    }
+    .logo-shimmer {
+      position: relative; overflow: hidden;
+    }
+    .logo-shimmer::after {
+      content: ""; position: absolute; top: 0; left: -100%; width: 50%; height: 100%;
+      background: linear-gradient(to right, transparent, rgba(255,255,255,0.4), transparent);
+      transform: skewX(-25deg);
+      animation: shimmer 2s infinite;
+    }
+    @keyframes shimmer {
+      100% { left: 200%; }
+    }
 
     .splash-glow {
       position: absolute;
@@ -106,122 +131,9 @@
       background: radial-gradient(circle, rgba(45, 212, 191, 0.15) 0%, rgba(255, 255, 255, 0) 70%);
       animation: glowPulse 4s infinite ease-in-out;
     }
-
-    .splash-content {
-      position: relative;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      z-index: 2;
-    }
-
-    .hero-logo {
-      max-width: 320px;
-      filter: blur(10px);
-      opacity: 0;
-      transform: scale(0.85);
-      animation: heroFocus 1.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-    }
-
-    .tagline-reveal {
-      position: absolute;
-      bottom: 60px;
-      left: 0;
-      width: 100%;
-      text-align: center;
-      color: var(--text-secondary);
-      font-size: 14px;
-      font-weight: 700;
-      letter-spacing: 2.5px;
-      opacity: 0;
-      transform: translateY(20px);
-      animation: taglineFadeUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) 1.5s forwards;
-      text-transform: uppercase;
-      font-family: 'Outfit', sans-serif;
-      z-index: 10;
-    }
-
-    /* Ambient Particles */
-    #splash-particles {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      overflow: hidden;
-      pointer-events: none;
-      z-index: 1;
-    }
-
-    .particle {
-      position: absolute;
-      font-size: 28px;
-      opacity: 0.1;
-      animation: moneyFloat 12s infinite linear;
-      filter: blur(0.5px);
-    }
-
-    @keyframes moneyFloat {
-      0% {
-        transform: translateY(115vh) rotate(0deg) scale(0.8);
-        opacity: 0;
-      }
-
-      10% {
-        opacity: 0.12;
-      }
-
-      90% {
-        opacity: 0.12;
-      }
-
-      100% {
-        transform: translateY(-15vh) rotate(360deg) scale(1.2);
-        opacity: 0;
-      }
-    }
-
-    .progress-container {
-      position: absolute;
-      bottom: 0;
-      left: 0;
-      width: 100%;
-      height: 3px;
-      background: #f1f5f9;
-      overflow: hidden;
-    }
-
-    .progress-fill {
-      width: 0%;
-      height: 100%;
-      background: linear-gradient(90deg, #2dd4bf, #10b981);
-      animation: progressEntry 2.5s cubic-bezier(0.65, 0, 0.35, 1) forwards;
-    }
-
-    /* Cinematic Textures */
-    .splash-texture {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
-      opacity: 0.03;
-      pointer-events: none;
-      mix-blend-mode: multiply;
-      z-index: 1;
-    }
-
-    .grid-overlay {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background-size: 40px 40px;
-      background-image: linear-gradient(to right, rgba(45, 212, 191, 0.03) 1px, transparent 1px),
-        linear-gradient(to bottom, rgba(45, 212, 191, 0.03) 1px, transparent 1px);
-      z-index: 1;
+    @keyframes glowPulse {
+      0%, 100% { transform: scale(1); opacity: 0.15; }
+      50% { transform: scale(1.3); opacity: 0.25; }
     }
 
     /* Auth Card Enhancements */
@@ -239,21 +151,8 @@
     }
 
     @keyframes authEntrance {
-      from {
-        opacity: 0;
-        transform: translateY(40px) scale(0.95);
-      }
-
-      to {
-        opacity: 1;
-        transform: translateY(0) scale(1);
-      }
-    }
-
-    .form-group input:focus {
-      border-color: var(--primary-color) !important;
-      box-shadow: 0 0 0 4px rgba(45, 212, 191, 0.1) !important;
-      transform: translateY(-2px);
+      from { opacity: 0; transform: translateY(40px) scale(0.95); }
+      to { opacity: 1; transform: translateY(0) scale(1); }
     }
 
     .form-group input {
@@ -278,7 +177,6 @@
       transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
       box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
     }
-
     .pill-btn:hover {
       transform: translateY(-3px) scale(1.05);
       box-shadow: 0 10px 20px rgba(45, 212, 191, 0.1);
@@ -286,49 +184,12 @@
       color: var(--primary-color);
     }
 
-    /* Form Transitions */
     .form-transition-container {
       overflow: hidden;
       position: relative;
     }
-
     .auth-slide {
       transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
-    }
-
-    @keyframes heroFocus {
-      to {
-        filter: blur(0);
-        opacity: 1;
-        transform: scale(1);
-      }
-    }
-
-    @keyframes taglineFadeUp {
-      to {
-        opacity: 0.8;
-        transform: translateY(0);
-      }
-    }
-
-    @keyframes glowPulse {
-
-      0%,
-      100% {
-        transform: scale(1);
-        opacity: 0.15;
-      }
-
-      50% {
-        transform: scale(1.3);
-        opacity: 0.25;
-      }
-    }
-
-    @keyframes progressEntry {
-      to {
-        width: 100%;
-      }
     }
   </style>
 </head>
@@ -337,40 +198,28 @@
 
   <!-- Splash Screen -->
   <div id="splash-screen">
-    <div class="splash-texture"></div>
-    <div class="grid-overlay"></div>
-    <div id="splash-particles">
-      <!-- Dynamic Wealth Ambiance (Front Layer) -->
-      <div class="particle" style="left:5%; animation-duration:9s; animation-delay:0s;">🪙</div>
-      <div class="particle" style="left:15%; animation-duration:14s; animation-delay:2s;">💸</div>
-      <div class="particle" style="left:25%; animation-duration:11s; animation-delay:5s;">💰</div>
-      <div class="particle" style="left:35%; animation-duration:18s; animation-delay:1s;">💎</div>
-      <div class="particle" style="left:45%; animation-duration:10s; animation-delay:7s;">🪙</div>
-      <div class="particle" style="left:55%; animation-duration:15s; animation-delay:3s;">💵</div>
-      <div class="particle" style="left:65%; animation-duration:12s; animation-delay:6s;">🪙</div>
-      <div class="particle" style="left:75%; animation-duration:16s; animation-delay:0.5s;">💸</div>
-      <div class="particle" style="left:85%; animation-duration:13s; animation-delay:4s;">💰</div>
-      <div class="particle" style="left:95%; animation-duration:20s; animation-delay:8s;">💎</div>
-
-      <!-- Back Layer (Smaller, Slower, More Subtle) -->
-      <div class="particle" style="left:12%; animation-duration:22s; animation-delay:5s; font-size:16px; opacity:0.04;">
-        🪙</div>
-      <div class="particle"
-        style="left:42%; animation-duration:30s; animation-delay:10s; font-size:14px; opacity:0.03;">💵</div>
-      <div class="particle"
-        style="left:68%; animation-duration:26s; animation-delay:15s; font-size:18px; opacity:0.05;">💰</div>
-      <div class="particle" style="left:92%; animation-duration:35s; animation-delay:2s; font-size:15px; opacity:0.04;">
-        💎</div>
+    <div class="splash-logo-container logo-shimmer">
+      <img src="assets/img/logo copy.png" style="width:140px; filter: drop-shadow(0 20px 40px rgba(0,0,0,0.15));">
     </div>
     <div class="splash-glow"></div>
-    <div class="splash-content">
-      <img src="assets/img/logo.png" alt="Paisa Flow Logo" class="hero-logo">
-    </div>
-    <p class="tagline-reveal">Secure Private Ledger</p>
-    <div class="progress-container">
-      <div class="progress-fill"></div>
-    </div>
   </div>
+
+  <script>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('sw.js').then(reg => {
+          reg.addEventListener('updatefound', () => {
+            const newWorker = reg.installing;
+            newWorker.addEventListener('statechange', () => {
+              if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+                window.dispatchEvent(new CustomEvent('app-update-available'));
+              }
+            });
+          });
+        });
+      });
+    }
+  </script>
 
   <!-- Intro / Getting Started Screen -->
   <div id="intro-screen"
@@ -398,7 +247,7 @@
     <div id="auth-section" style="width:100%; max-width:440px;">
       <div class="auth-card">
         <div style="text-align: center; margin-bottom: 32px;">
-          <img src="assets/img/logo.png" style="width:72px; filter: drop-shadow(0 15px 25px rgba(0,0,0,0.1));">
+          <img src="assets/img/logo copy.png" style="width:72px; filter: drop-shadow(0 15px 25px rgba(0,0,0,0.1));">
         </div>
 
         <div id="auth-header-content">
@@ -471,6 +320,47 @@
     <!-- Scripts -->
     <script src="js/api.js"></script>
     <script src="js/auth.js"></script>
+    <script src="js/security.js"></script>
+
+    <!-- VAULT LOCK OVERLAY -->
+    <div id="vault-lock-overlay">
+       <img src="assets/img/logo copy.png" style="width:120px; margin-bottom: 24px;">
+       <h2 style="font-weight:700; color:var(--text-primary); margin:0;">Vault Locked</h2>
+       <p style="color:var(--text-secondary); font-size:14px; margin: 8px 0 24px;">Confirm identity to reveal ledger</p>
+       
+       <div class="pin-display" id="lock-pin-display">
+          <div class="pin-dot"></div><div class="pin-dot"></div><div class="pin-dot"></div><div class="pin-dot"></div>
+       </div>
+
+       <div class="pin-pad" id="lock-pin-pad"></div>
+
+       <a href="#" onclick="VaultSecurity.forgotPin()" style="margin-top:32px; color:var(--text-secondary); font-size:13px; text-decoration:none; font-weight:600;">Forgot PIN?</a>
+    </div>
+
+    <!-- SECURITY SETUP OVERLAY -->
+    <div id="security-setup-overlay">
+       <div style="font-size:48px; margin-bottom:20px;">🛡️</div>
+       <h2 style="font-weight:800; color:var(--text-primary); margin:0;">Secure Your Vault</h2>
+       <p style="color:var(--text-secondary); font-size:14px; margin: 12px 0 32px; text-align:center;">Register a 4-digit PIN for instant local access.</p>
+       
+       <div class="pin-display" id="setup-pin-display">
+          <div class="pin-dot"></div><div class="pin-dot"></div><div class="pin-dot"></div><div class="pin-dot"></div>
+       </div>
+
+       <div class="pin-pad" id="setup-pin-pad"></div>
+    </div>
+
+    <!-- UPDATE BANNER -->
+    <div id="app-update-banner">
+       <div class="update-info">
+          <span class="material-icons">system_update</span>
+          <div>
+             <div style="font-weight:700; font-size:14px;">Update Available</div>
+             <div style="font-size:11px; opacity:0.8;">New version detected in vault.</div>
+          </div>
+       </div>
+       <div class="update-btn" onclick="VaultSecurity.forceUpdate()">UPDATE NOW</div>
+    </div>
 </body>
 
 </html>

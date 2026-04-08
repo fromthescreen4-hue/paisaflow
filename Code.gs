@@ -393,3 +393,52 @@ function saveCalculation(calcObject) {
   getSheetByName('Daily Calculator').appendRow([ calcObject.userEmail, new Date(), 'Manual Calc', Number(calcObject.result), '' ]);
   return "Calculations exported.";
 }
+
+/* =========================================================
+   VAULT SECURITY: PIN RECOVERY
+   ========================================================= */
+
+function sendPINResetOTP(email) {
+   if (!email) throw new Error("Email required for recovery.");
+   const otp = Math.floor(100000 + Math.random() * 900000).toString();
+   const ss = SpreadsheetApp.getActiveSpreadsheet();
+   const sheet = getSheetByName('PendingSignups');
+   
+   // Expiry 10 mins
+   const expiry = new Date(new Date().getTime() + 10 * 60000);
+   sheet.appendRow([email, otp, otp, expiry]); 
+
+   try {
+      MailApp.sendEmail({
+         to: email,
+         subject: "Paisa Flow - Vault Recovery Code",
+         htmlBody: `
+           <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 30px; background-color: #ffffff; border-top: 4px solid #ef4444; border-radius: 8px;">
+              <h3 style="color: #0b1d3a;">Vault Security Recovery</h3>
+              <p>Someone requested to reset the Vault Lock on your Paisa Flow account. Use the code below to register a new local PIN.</p>
+              <div style="font-size: 32px; font-weight: bold; color: #ef4444; margin: 20px 0; letter-spacing: 5px; text-align: center;">${otp}</div>
+              <p style="color: #64748B; font-size: 14px;">This code will expire in 10 minutes.</p>
+              <p style="color: #718096; font-size: 13px;">If you did not request this, please ensure your account password is secure.</p>
+           </div>
+         `
+      });
+      return { success: true };
+   } catch (e) {
+      throw new Error("Unable to dispatch recovery code.");
+   }
+}
+
+function verifyPINResetOTP(email, otp) {
+   if (!email || !otp) throw new Error("Missing recovery details.");
+   const sheet = getSheetByName('PendingSignups');
+   const data = sheet.getDataRange().getValues();
+
+   for (let i = data.length - 1; i >= 1; i--) {
+      if (data[i][0] === email && String(data[i][2]) === String(otp)) {
+         if (new Date() > new Date(data[i][3])) throw new Error("Recovery Code Expired.");
+         sheet.deleteRow(i + 1);
+         return { success: true };
+      }
+   }
+   throw new Error("Invalid recovery code.");
+}
