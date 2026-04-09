@@ -123,12 +123,43 @@ class UI {
                         <strong style="font-size:18px; display:block; color:var(--accent-color);">${cur}${(stats.balance > 0 ? stats.balance : 0).toFixed(0)}</strong>
                     </div>
                 </div>
-                <div class="card glass" style="margin-top:20px; display:flex; align-items:center; gap:15px; padding:20px;">
-                    <div style="background:rgba(139, 92, 246, 0.1); color:var(--accent-color); padding:10px; border-radius:12px;"><i class="fa-solid fa-fire-flame-curved"></i></div>
-                    <div>
-                        <p style="margin:0; font-size:10px; opacity:0.5; font-weight:800;">TOP CATEGORY</p>
-                        <h4 style="margin:0; font-size:16px;">${this.getTopCategory(stats.categories)}</h4>
+                <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-top:16px;">
+                    <div class="card glass" style="padding:15px; display:flex; align-items:center; gap:10px;">
+                        <i class="fa-solid fa-bolt" style="font-size:14px; opacity:0.4;"></i>
+                        <div>
+                            <p style="margin:0; font-size:9px; opacity:0.5; font-weight:800;">BURN RATE</p>
+                            <h4 style="margin:0; font-size:14px;">${cur}${stats.burnRate.toFixed(0)}</h4>
+                        </div>
                     </div>
+                    <div class="card glass" style="padding:15px; display:flex; align-items:center; gap:10px;">
+                        <i class="fa-solid fa-fire-flame-curved" style="font-size:14px; opacity:0.4;"></i>
+                        <div>
+                            <p style="margin:0; font-size:9px; opacity:0.5; font-weight:800;">TOP CLASS</p>
+                            <h4 style="margin:0; font-size:14px;">${this.getTopCategory(stats.categories)}</h4>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- SURFACED FEATURE: RECENT ACTIVITY -->
+                <div style="margin-top:24px;">
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+                        <h4 style="margin:0; font-size:13px; font-weight:800; opacity:0.6; text-transform:uppercase; letter-spacing:1px;">Recent Entries</h4>
+                        <span style="font-size:10px; color:var(--accent-color); font-weight:800; cursor:pointer;" onclick="showView('ledger')">VIEW ALL</span>
+                    </div>
+                    ${stats.raw.slice(0,5).map(tx => `
+                        <div class="card glass" style="padding:12px 16px; margin-bottom:8px; display:flex; justify-content:space-between; align-items:center; background:rgba(255,255,255,0.02);">
+                            <div style="display:flex; align-items:center; gap:12px;">
+                                <div style="width:32px; height:32px; border-radius:10px; background:rgba(139,92,246,0.1); display:flex; align-items:center; justify-content:center; font-size:14px;">
+                                    ${tx.category.split(' ').pop()}
+                                </div>
+                                <div>
+                                    <p style="margin:0; font-size:13px; font-weight:600;">${tx.category.split(' ')[0]}</p>
+                                    <p style="margin:1px 0 0; font-size:9px; opacity:0.4;">${tx.date}</p>
+                                </div>
+                            </div>
+                            <strong style="font-size:14px; color:${tx.type==='Income'?'#10b981':'#fff'}">${tx.type==='Income'?'+':'-'}${cur}${parseFloat(tx.amount).toFixed(0)}</strong>
+                        </div>
+                    `).join('') || '<p style="text-align:center; font-size:12px; opacity:0.4; padding:20px;">No entries logged today.</p>'}
                 </div>
             `;
         } else if (type === 'Week') {
@@ -145,7 +176,7 @@ class UI {
             `;
         } else {
              const savings = stats.totalIncome - stats.totalExpense;
-             const rate = stats.totalIncome > 0 ? Math.floor((savings / stats.totalIncome) * 100) : 0;
+             const rate = stats.savingsRate;
              content = `
                 <div class="view-header">
                     <span class="view-date">Full Cycle</span>
@@ -161,37 +192,39 @@ class UI {
                         <strong style="font-size:24px; display:block;">${rate}%</strong>
                     </div>
                 </div>
-                <div class="stat-card glass" style="padding:24px; display:flex; justify-content:space-between; align-items:center;">
+                <div class="stat-card glass" style="padding:24px; display:flex; justify-content:space-between; align-items:center; border-left:4px solid ${stats.projection < 0 ? '#f43f5e' : '#10b981'}; margin-bottom:20px;">
                     <div>
-                        <p style="margin:0; font-size:11px; opacity:0.5; font-weight:800;">TOTAL INCOME</p>
-                        <h3 style="margin:4px 0 0; font-size:20px;">${cur}${stats.totalIncome.toLocaleString()}</h3>
+                        <p style="margin:0; font-size:11px; opacity:0.5; font-weight:800;">ELITE PROJECTION</p>
+                        <h3 style="margin:4px 0 0; font-size:20px; color:${stats.projection < 0 ? '#f43f5e' : '#10b981'};">${cur}${stats.projection.toLocaleString()}</h3>
                     </div>
-                    <i class="fa-solid fa-arrow-trend-up" style="font-size:24px; opacity:0.2;"></i>
+                    <i class="fa-solid ${stats.projection < 0 ? 'fa-triangle-exclamation' : 'fa-chart-line'}" style="font-size:24px; opacity:0.2;"></i>
+                </div>
+
+                <!-- SURFACED FEATURE: CATEGORY BREAKDOWN -->
+                <div style="margin-top:24px;">
+                    <h4 style="margin:0 0 16px; font-size:13px; font-weight:800; opacity:0.6; text-transform:uppercase; letter-spacing:1px;">Category Distribution</h4>
+                    <div style="display:flex; flex-direction:column; gap:16px;">
+                        ${Object.keys(stats.categories).map(cat => {
+                            const amt = stats.categories[cat];
+                            const pct = stats.totalExpense > 0 ? (amt / stats.totalExpense * 100).toFixed(0) : 0;
+                            return `
+                                <div>
+                                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
+                                        <span style="font-size:12px; font-weight:600;">${cat}</span>
+                                        <span style="font-size:12px; font-weight:800; opacity:0.7;">${cur}${amt.toLocaleString()}</span>
+                                    </div>
+                                    <div style="height:6px; width:100%; background:rgba(255,255,255,0.05); border-radius:3px; overflow:hidden;">
+                                        <div style="height:100%; width:${pct}%; background:var(--accent-color); opacity:${0.3 + (pct/100)*0.7}; border-radius:3px;"></div>
+                                    </div>
+                                </div>
+                            `;
+                        }).join('') || '<p style="text-align:center; font-size:12px; opacity:0.4;">No categories recorded this month.</p>'}
+                    </div>
                 </div>
             `;
         }
-                    <span class="view-date">${new Date().toLocaleDateString('en-US', {month: 'long'})} Snapshot</span>
-                    <h2 class="view-title">Financial Health</h2>
-                </div>
-                <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-bottom:20px;">
-                    <div class="stat-card glass" style="background:rgba(0,224,117,0.05);">
-                        <span style="font-size:10px; font-weight:800; opacity:0.6;">INCOME</span>
-                        <strong style="font-size:22px; color:var(--accent-color); display:block;">${cur}${stats.totalIncome.toFixed(0)}</strong>
-                    </div>
-                    <div class="stat-card glass" style="background:rgba(251,191,36,0.05);">
-                        <span style="font-size:10px; font-weight:800; opacity:0.6;">EXPENSE</span>
-                        <strong style="font-size:22px; color:#fbbf24; display:block;">${cur}${stats.totalExpense.toFixed(0)}</strong>
-                    </div>
-                </div>
-                <div class="card glass" style="padding:24px; display:flex; justify-content:space-between; align-items:center;">
-                    <div>
-                        <h4 style="margin:0; font-size:18px;">Efficiency</h4>
-                        <p style="margin:2px 0 0; font-size:12px; opacity:0.5;">Savings Rate</p>
-                    </div>
-                    <div style="font-size:36px; font-weight:900; color:var(--accent-color);">${rate}%</div>
-                </div>
-             `;
-        }
+        
+        container.innerHTML = content;
         
         container.innerHTML = content;
         if (type === 'Week') setTimeout(() => this.drawBarChart(stats.byDay, 'week-chart'), 100);
@@ -267,5 +300,32 @@ class UI {
             `;
             container.appendChild(item);
         });
+    }
+
+    static renderInsights() {
+        const container = document.getElementById('balance-content');
+        if (!container) return;
+        
+        const narratives = IntelEngine.generateNarrative();
+        let content = `<div style="padding-bottom:20px;">`;
+        
+        narratives.forEach(n => {
+            content += `<div class="card glass" style="padding:20px; margin-bottom:12px; display:flex; align-items:center; gap:16px; border-left:2px solid var(--accent-color);">
+                <div style="font-size:14px; line-height:1.4; font-weight:500;">${n}</div>
+            </div>`;
+        });
+        
+        const bStatus = IntelEngine.getBudgetStatus();
+        if (bStatus) {
+            content += `<div class="card glass highlight" style="padding:20px; background:${bStatus.color}22; border-color:${bStatus.color}44;">
+                <h4 style="margin:0; color:${bStatus.color}">${bStatus.msg}</h4>
+                <div style="height:4px; width:100%; background:rgba(255,255,255,0.1); border-radius:2px; margin-top:12px;">
+                    <div style="height:100%; width:${Math.min(bStatus.usage, 100)}%; background:${bStatus.color}; border-radius:2px;"></div>
+                </div>
+            </div>`;
+        }
+        
+        content += `</div>`;
+        container.innerHTML = content;
     }
 }

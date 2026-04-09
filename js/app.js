@@ -28,7 +28,10 @@ function initApp() {
     const dateInp = document.getElementById('tx-date');
     if (dateInp) dateInp.valueAsDate = new Date();
 
-    syncFromCloud().then(() => refreshUI());
+    syncFromCloud().then(() => {
+        DB.processRecurring(); // Audit recurring cycles
+        refreshUI();
+    });
 }
 
 async function syncFromCloud() {
@@ -50,6 +53,7 @@ function refreshUI() {
     if (typeof UI !== 'undefined' && typeof DB !== 'undefined') {
         UI.renderAllViews();
         UI.renderLedger();
+        UI.renderInsights(); // Build Intelligent Narratives
     }
 }
 

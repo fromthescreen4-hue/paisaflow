@@ -41,7 +41,22 @@
         }
     };
 
-    // 3. AUTOMATIC BINDING
+    // 3. SEAMLESS SESSION VALIDATOR
+    window.validateSession = function() {
+        const isProtectedPage = window.location.pathname.includes('dashboard.html');
+        const hasKey = sessionStorage.getItem('vaultKey');
+        const hasEmail = localStorage.getItem('userEmail');
+
+        if (isProtectedPage && (!hasKey || !hasEmail)) {
+            console.warn("Unauthorized Access Attempt. Safeguarding Vault.");
+            window.location.href = '../index.html';
+        }
+    };
+
+    // Run Security Checks
+    validateSession();
+
+    // 4. AUTOMATIC BINDING
     function bindHaptics() {
         const selectors = '.pill-btn, .fab, .arrow-btn, .nav-item, .verify-thumb, .onboard-btn-next, .onboard-btn-secondary';
         document.querySelectorAll(selectors).forEach(el => {
