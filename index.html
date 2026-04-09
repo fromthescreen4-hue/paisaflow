@@ -114,8 +114,23 @@
     <div id="auth-form-container">
       <form id="auth-form" onsubmit="return false">
         <div id="signup-fields" style="display:none;">
+           <div style="display:flex; flex-direction:column; align-items:center; margin-bottom:24px;">
+              <label>Choose Avatar</label>
+              <div style="display:flex; gap:12px; margin-top:8px;" id="avatar-selector">
+                 <div class="avatar-opt active" onclick="selectAvatar('👤', this)">👤</div>
+                 <div class="avatar-opt" onclick="selectAvatar('👑', this)">👑</div>
+                 <div class="avatar-opt" onclick="selectAvatar('💎', this)">💎</div>
+                 <div class="avatar-opt" onclick="selectAvatar('📈', this)">📈</div>
+                 <div class="avatar-opt" onclick="selectAvatar('🚀', this)">🚀</div>
+              </div>
+              <input type="hidden" id="auth-avatar" value="👤">
+           </div>
            <div class="form-group" style="margin-bottom:20px;"><label>Full Name</label><input type="text" id="auth-name" placeholder="Elite Member"></div>
-           <div class="form-group" style="margin-bottom:20px;"><label>Currency</label><select id="auth-currency"><option value="₹">₹ INR</option><option value="$">$ USD</option></select></div>
+           <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-bottom:20px;">
+              <div class="form-group"><label>Vault Phone</label><input type="tel" id="auth-phone" placeholder="+1..."></div>
+              <div class="form-group"><label>Currency</label><select id="auth-currency"><option value="₹">₹ INR</option><option value="$">$ USD</option><option value="€">€ EUR</option></select></div>
+           </div>
+           <div class="form-group" style="margin-bottom:24px;"><label>Elite Bio</label><input type="text" id="auth-bio" placeholder="Financial Freedom 2026"></div>
         </div>
         <div class="form-group" style="margin-bottom:20px;"><label>Email</label><input type="email" id="auth-email" required placeholder="name@vault.com"></div>
         <div class="form-group" style="margin-bottom:30px;"><label>Private Key (PIN)</label><input type="password" id="auth-password" required placeholder="••••••••"></div>
@@ -190,6 +205,13 @@
             document.getElementById('onboarding-container').style.display = 'none';
             document.getElementById('auth-portal').style.display = 'block';
         }, 600);
+    }
+
+    function selectAvatar(emoji, el) {
+        document.getElementById('auth-avatar').value = emoji;
+        const opts = document.querySelectorAll('.avatar-opt');
+        opts.forEach(o => o.classList.remove('active'));
+        el.classList.add('active');
     }
   </script>
   <script src="js/auth.js"></script>

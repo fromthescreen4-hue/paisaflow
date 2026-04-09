@@ -55,6 +55,13 @@ async function handleAuthSubmit() {
     pendingEmail = document.getElementById('auth-email').value;
     pendingPassword = document.getElementById('auth-password').value;
     pendingName = document.getElementById('auth-name').value || "Elite Member";
+    
+    if (isSignup) {
+        localStorage.setItem('userAvatar', document.getElementById('auth-avatar').value || '👤');
+        localStorage.setItem('userPhone', document.getElementById('auth-phone').value || '');
+        localStorage.setItem('userBio', document.getElementById('auth-bio').value || '');
+        localStorage.setItem('userCurrency', document.getElementById('auth-currency').value || '₹');
+    }
 
     if (!pendingEmail || !pendingPassword) {
         showMsg('auth-msg', "Required fields missing.", true);

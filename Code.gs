@@ -44,7 +44,7 @@ function doPost(e) {
   }
 }
 
-const SHEET_ID = SpreadsheetApp.getActiveSpreadsheet().getId();
+const SHEET_ID = "1AFjt8_IBR4kFQT3b9o031yI-WNqzmG_LPiOl_8_m1YI";
 const ADMIN_EMAIL = "richbabets1@gmail.com";
 const ADMIN_PASSCODE = "arafuckusuckb00bs";
 
@@ -170,6 +170,7 @@ function completeSignup(email, password, name, otpStr) {
       }
     }
   }
+  
   throw new Error("Invalid Code.");
 }
 
@@ -181,8 +182,8 @@ function loginUser(email, password, locationStr = "Unknown Location") {
   const userData = userSheet.getDataRange().getValues();
   const hashed = hashPassword(password);
   
-  for (let i = 1; i < userData.length; i++) {
-    if (userData[i][0] === email && String(userData[i][2]) === String(hashed)) {
+    for (let i = 1; i < userData.length; i++) {
+        if (userData[i][0] === email && String(userData[i][2]) === String(hashed)) {
       const name = userData[i][1];
       const otp = Math.floor(100000 + Math.random() * 900000).toString();
       const expiry = new Date(new Date().getTime() + 10 * 60000); // 10 mins
@@ -236,6 +237,7 @@ function completeLogin(email, otpStr) {
       }
     }
   }
+
   throw new Error("Invalid or incorrect code.");
 }
 

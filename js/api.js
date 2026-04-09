@@ -10,7 +10,7 @@ document.addEventListener('DOMContentLoaded', () => {
     document.querySelectorAll('.app-version-display').forEach(el => el.innerText = window.APP_VERSION);
 });
 
-window.WEB_APP_URL = "https://script.google.com/macros/s/AKfycbyTHCJPfyA8B3i0bteZhtlgPs8uUNz9RVdEuWe6qZdQDeigREq4tLPVK5t38bk20zPQ/exec";
+window.WEB_APP_URL = "https://script.google.com/macros/s/AKfycby6CgfUDK4EE-vQd-lIsje39LqzPNZAJrj20pRrDkmjljd3jaliTBDvqLpK6swgr5Qr/exec";
 
 async function serverCall(methodName, ...args) {
     if (!window.WEB_APP_URL) throw new Error("Missing WEB_APP_URL.");

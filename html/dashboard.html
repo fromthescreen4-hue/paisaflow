@@ -63,22 +63,23 @@
         </div>
     </div>
 
-    <!-- BOTTOM TAB BAR -->
+    <!-- BOTTOM TAB BAR (ELITE REBUILD) -->
     <div class="navbar">
         <div class="nav-item active" id="nav-home" onclick="closeAllOverlays()">
            <span class="material-icons">grid_view</span>
-           <span>Home</span>
+           <span>Grid View</span>
         </div>
         <div class="nav-item" id="nav-ledger" onclick="openLedger()">
            <span class="material-icons">account_balance_wallet</span>
-           <span>Ledger</span>
+           <span>Account</span>
         </div>
         
-        <div style="width: 80px;"></div>
-
+        <!-- CENTER GAP FOR FAB DOCK -->
+        <div style="flex: 0.8;"></div> 
+        
         <div class="nav-item" id="nav-events" onclick="switchTab('events', this)">
            <span class="material-icons">auto_awesome</span>
-           <span>Events</span>
+           <span>Balance</span>
         </div>
         <div class="nav-item" id="nav-elite">
            <span class="material-icons">workspace_premium</span>
@@ -123,6 +124,25 @@
              </div>
           </form>
        </div>
+    </div>
+
+       </div>
+    </div>
+
+    <!-- FAREWELL OVERLAY (ENCOURAGING) -->
+    <div id="logout-overlay" class="modal-overlay" style="background: var(--bg-color); z-index: 9999;">
+        <div style="text-align: center; max-width: 300px;">
+            <div style="position: relative; display: inline-block;">
+                <img src="../assets/img/logo.png" style="width: 80px; margin-bottom: 24px; opacity: 0.8; animation: pulse 2s infinite;">
+                <div style="position: absolute; top:0; right: 0; width: 12px; height: 12px; background: #10b981; border-radius: 50%; border: 2px solid var(--bg-color);"></div>
+            </div>
+            <h2 style="font-weight: 800; letter-spacing: -1px; margin-bottom: 8px;">Vault Secured</h2>
+            <p style="color: var(--text-secondary); font-size: 14px; line-height: 1.5;">Your financial progress is safely locked in the cloud. We're counting the hours until your next entry!</p>
+            <div style="margin-top: 32px; padding: 16px; border-radius: 20px; background: rgba(139, 92, 246, 0.1); border: 1px dashed rgba(139, 92, 246, 0.3);">
+                <p style="font-size: 11px; font-weight: 800; color: var(--accent-color); text-transform: uppercase;">Elite Tip</p>
+                <p style="font-size: 12px; opacity: 0.7; margin: 4px 0 0;">Consistent daily tracking increases financial clarity by 80%.</p>
+            </div>
+        </div>
     </div>
 
     <script src="../js/api.js"></script>

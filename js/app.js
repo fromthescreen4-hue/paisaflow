@@ -114,9 +114,12 @@ function syncToSheets() {
 
 function logout() {
     if (confirm("Sign out of the Elite Vault? Your encrypted cloud data is safe, but your secondary local key will be purged.")) {
+        document.getElementById('logout-overlay').style.display = 'flex';
         localStorage.clear();
         sessionStorage.clear();
-        window.location.href = 'index.html';
+        setTimeout(() => {
+            window.location.href = '../index.html';
+        }, 2500);
     }
 }
 

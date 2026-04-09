@@ -11,7 +11,19 @@ class DB {
         
         let blob = localStorage.getItem(this.getDbName());
         if (!blob) {
-            return { transactions: [], events: [], deletedTxIds: [] };
+            // New vault initialization with profile
+            return { 
+               transactions: [], 
+               events: [], 
+               deletedTxIds: [],
+               profile: {
+                   name: localStorage.getItem('userName') || 'Elite Member',
+                   avatar: localStorage.getItem('userAvatar') || '👤',
+                   phone: localStorage.getItem('userPhone') || '',
+                   bio: localStorage.getItem('userBio') || '',
+                   currency: localStorage.getItem('userCurrency') || '₹'
+               }
+            };
         }
 
         try {

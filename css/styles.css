@@ -13,6 +13,7 @@
   --radius-lg: 24px;
   --shadow-premium: 0 20px 50px rgba(0, 0, 0, 0.6);
   --ease-premium: cubic-bezier(0.16, 1, 0.3, 1);
+  --nav-bg: rgba(11, 29, 58, 0.9);
 }
 
 * {
@@ -39,19 +40,21 @@ body {
 }
 
 /* NAVBAR & FAB */
+/* THE ELITE CURVED DOCK */
 .navbar {
   display: flex;
-  justify-content: space-around;
+  justify-content: space-between;
   align-items: center;
-  background: rgba(11, 29, 58, 0.85);
+  background: var(--nav-bg);
   backdrop-filter: blur(25px);
   -webkit-backdrop-filter: blur(25px);
-  height: 85px;
+  height: 80px;
   position: fixed;
   bottom: 0;
   width: 100%;
   z-index: 5000;
-  border-top: 1px solid rgba(255,255,255,0.1);
+  border-top: 1px solid rgba(255,255,255,0.08);
+  padding: 0 10px;
   padding-bottom: env(safe-area-inset-bottom);
 }
 
@@ -59,43 +62,67 @@ body {
   display: flex;
   flex-direction: column;
   align-items: center;
+  justify-content: center;
   gap: 4px;
   opacity: 0.5;
   transition: all 0.3s var(--ease-premium);
   cursor: pointer;
   flex: 1;
+  min-width: 0; /* Critical for clamp to work */
   color: var(--text-secondary);
 }
 
 .nav-item.active { 
   opacity: 1; 
   color: var(--accent-color);
-  transform: translateY(-2px);
 }
 
-.nav-item .material-icons { font-size: 26px; }
-.nav-item span { font-size: 9px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px; }
+.nav-item .material-icons { font-size: 22px; }
+.nav-item span { 
+  font-size: clamp(8px, 2vw, 9px); 
+  font-weight: 800; 
+  text-transform: uppercase; 
+  letter-spacing: 0.8px;
+  white-space: nowrap;
+}
 
+/* THE FLOATING CENTER FAB */
 .fab-container {
   position: fixed;
-  bottom: 35px;
+  bottom: 25px;
   left: 50%;
   transform: translateX(-50%);
-  z-index: 1001;
+  z-index: 5001;
 }
 
 .fab {
-  width: 68px;
-  height: 68px;
-  background: var(--accent-color);
-  border-radius: 24px;
+  width: 62px;
+  height: 62px;
+  background: linear-gradient(135deg, var(--accent-color) 0%, #4c1d95 100%);
+  border-radius: 20px;
   border: 4px solid var(--bg-color);
   display: flex;
   align-items: center;
   justify-content: center;
-  color: var(--bg-color);
-  box-shadow: 0 15px 30px rgba(0, 224, 117, 0.3);
-  transition: transform 0.4s var(--ease-premium);
+  color: white;
+  box-shadow: 0 10px 25px rgba(139, 92, 246, 0.4);
+  transition: 0.4s var(--ease-premium);
+}
+.fab:active { transform: scale(0.9); }
+
+/* Curve Mask for Navbar (Optional Enhancement for UI) */
+.navbar::before {
+  content: "";
+  position: absolute;
+  top: -24px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 80px;
+  height: 24px;
+  background: var(--nav-bg);
+  border-radius: 40px 40px 0 0;
+  border-top: 1px solid rgba(255,255,255,0.1);
+  display: none; /* Can be toggled if user wants the visual bridge */
 }
 .fab:active { transform: scale(0.85); }
 
@@ -201,7 +228,56 @@ input:focus { border-color: var(--accent-color); background: rgba(255,255,255,0.
   border: 1px solid var(--border-glass);
 }
 
-.onboard-btn-secondary:hover {
-  background: rgba(255, 255, 255, 0.1);
+/* SEGMENTED CONTROL: PILLS */
+.time-pills {
+  display: flex;
+  gap: 8px;
+  background: rgba(255, 255, 255, 0.03);
+  padding: 6px;
+  border-radius: 20px;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.pill {
+  flex: 1;
+  padding: 10px 0;
+  border-radius: 14px;
+  border: none;
+  background: transparent;
+  color: var(--text-secondary);
+  font-weight: 700;
+  font-size: 13px;
+  cursor: pointer;
+  transition: all 0.3s var(--ease-premium);
+}
+
+.pill.active {
+  background: var(--accent-color);
   color: white;
+  box-shadow: 0 10px 20px rgba(139, 92, 246, 0.2);
+}
+
+.pill:hover:not(.active) {
+  background: rgba(255, 255, 255, 0.05);
+  color: white;
+}
+
+/* AVATAR SELECTOR */
+.avatar-opt {
+  width: 54px; height: 54px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.05);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 24px; cursor: pointer;
+  border: 2px solid transparent;
+  transition: 0.3s var(--ease-premium);
+}
+.avatar-opt.active {
+  background: rgba(139, 92, 246, 0.15);
+  border-color: var(--accent-color);
+  transform: scale(1.1);
+  box-shadow: 0 0 20px rgba(139, 92, 246, 0.3);
+}
+.avatar-opt:hover:not(.active) {
+  background: rgba(255, 255, 255, 0.1);
 }

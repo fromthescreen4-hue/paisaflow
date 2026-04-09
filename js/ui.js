@@ -202,18 +202,13 @@ class UI {
     }
 
     static renderAvatar() {
-        const container = document.getElementById('profile-container');
-        if (!container) return;
-        const photo = localStorage.getItem('userPhoto');
-        const name = localStorage.getItem('userName') || "M";
+        const d = DB.data;
+        const profile = d.profile || {};
+        const avatar = profile.avatar || '👤';
+        const name = profile.name || localStorage.getItem('userName') || 'Elite Member';
+        const bio = profile.bio || 'Elite Digital Vault 2.0';
 
-        if (photo) {
-            container.innerHTML = `<img src="${photo}" class="profile-img">`;
-        } else {
-            const colors = ['#8b5cf6', '#ec4899', '#0ea5e9', '#fbbf24', '#ffffff'];
-            const randomColor = colors[Math.floor(Math.random() * colors.length)];
-            container.innerHTML = `
-                <div class="avatar-fallback" style="background: linear-gradient(135deg, ${randomColor} 0%, rgba(255,255,255,0.1) 100%);">
+        const container = document.getElementById('profile-container');
                     ${name.charAt(0).toUpperCase()}
                 </div>`;
         }
