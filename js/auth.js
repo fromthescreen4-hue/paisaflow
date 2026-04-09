@@ -88,6 +88,7 @@ function showOTPUI(subtitle) {
     setTimeout(() => {
         document.getElementById('auth-form').style.display = 'none';
         document.getElementById('otp-verify-group').style.display = 'block';
+        document.getElementById('auth-otp').value = ''; // Clear stale OTP
         document.getElementById('auth-subtitle').innerText = subtitle;
         document.getElementById('toggle-auth-btn').style.display = 'none';
     }, 300);
@@ -99,6 +100,7 @@ function returnToAuth() {
     document.getElementById('auth-form').style.opacity = '1';
     document.getElementById('toggle-auth-btn').style.display = 'inline-block';
     document.getElementById('auth-subtitle').innerText = "Enter your private vault";
+    document.getElementById('auth-otp').value = ''; // Clear on return
     resetSlider();
 }
 

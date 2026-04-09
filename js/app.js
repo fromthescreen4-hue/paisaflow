@@ -28,7 +28,22 @@ function initApp() {
     const dateInp = document.getElementById('tx-date');
     if (dateInp) dateInp.valueAsDate = new Date();
 
-    refreshUI();
+    syncFromCloud().then(() => refreshUI());
+}
+
+async function syncFromCloud() {
+    const email = localStorage.getItem('userEmail');
+    if (!email) return;
+    
+    try {
+        const res = await serverCall('getVault', email);
+        if (res && res.blob) {
+            localStorage.setItem('v3_vault_blob_' + email, res.blob);
+            console.log("Cloud Vault Restored Successfully.");
+        }
+    } catch(e) {
+        console.warn("Cloud Fetch Failed. Using Virtual DB (local).");
+    }
 }
 
 function refreshUI() {
@@ -98,8 +113,9 @@ function syncToSheets() {
 }
 
 function logout() {
-    if (confirm("Sign out of the Elite Vault? Your local data will remain encrypted.")) {
+    if (confirm("Sign out of the Elite Vault? Your encrypted cloud data is safe, but your secondary local key will be purged.")) {
         localStorage.clear();
+        sessionStorage.clear();
         window.location.href = 'index.html';
     }
 }

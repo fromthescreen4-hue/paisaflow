@@ -26,6 +26,8 @@ function doPost(e) {
     else if (action === 'pullInitialData') result = pullInitialData(args[0]);
     else if (action === 'syncData') result = syncData(args[0]);
     else if (action === 'saveCalculation') result = saveCalculation(args[0]);
+    else if (action === 'saveVault') result = saveVault(args[0], args[1]);
+    else if (action === 'getVault') result = getVault(args[0]);
     
     // ADMIN ACTIONS
     else if (action === 'adminGetTelemetry') result = adminGetTelemetry(args[0], args[1]);
@@ -68,6 +70,9 @@ function getSheetByName(name) {
       sheet.setFrozenRows(1);
     } else if (name === 'PendingSignups') {
       sheet.appendRow(['Email', 'Name', 'OTP', 'Expiry']);
+      sheet.setFrozenRows(1);
+    } else if (name === 'Vaults') {
+      sheet.appendRow(['UserEmail', 'EncryptedBlob', 'LastUpdated', 'Version']);
       sheet.setFrozenRows(1);
     }
   }
@@ -392,6 +397,38 @@ function saveCalculation(calcObject) {
   if(!calcObject.userEmail) throw new Error("Not logged in");
   getSheetByName('Daily Calculator').appendRow([ calcObject.userEmail, new Date(), 'Manual Calc', Number(calcObject.result), '' ]);
   return "Calculations exported.";
+}
+
+/* =========================================================
+   NEW: ELITE VAULT SYNC (BLOB ENCRYPTION)
+   ========================================================= */
+
+function saveVault(email, blob) {
+    if (!email || !blob) throw new Error("Invalid sync payload.");
+    const sheet = getSheetByName('Vaults');
+    const data = sheet.getDataRange().getValues();
+    let rowIndex = -1;
+    for (let i = 1; i < data.length; i++) {
+        if (data[i][0] === email) { rowIndex = i + 1; break; }
+    }
+    
+    if (rowIndex > -1) {
+        sheet.getRange(rowIndex, 2).setValue(blob);
+        sheet.getRange(rowIndex, 3).setValue(new Date());
+    } else {
+        sheet.appendRow([email, blob, new Date(), "2.0"]);
+    }
+    return { success: true };
+}
+
+function getVault(email) {
+    if (!email) throw new Error("Authentication required for Vault fetch.");
+    const sheet = getSheetByName('Vaults');
+    const data = sheet.getDataRange().getValues();
+    for (let i = 1; i < data.length; i++) {
+        if (data[i][0] === email) return { blob: data[i][1] };
+    }
+    return { blob: null };
 }
 
 

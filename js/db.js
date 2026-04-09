@@ -2,37 +2,45 @@
 
 class DB {
     static getDbName() { 
-        return 'v3_finance_' + localStorage.getItem('userEmail'); 
+        return 'v3_vault_blob_' + localStorage.getItem('userEmail'); 
     }
 
     static get data() {
         const email = localStorage.getItem('userEmail');
         if (!email) return { transactions: [], events: [], deletedTxIds: [] };
-        let obj = localStorage.getItem(this.getDbName());
-        if (!obj) {
-            const initData = { transactions: [], events: [], deletedTxIds: [] };
-            this.save(initData);
-            return initData;
+        
+        let blob = localStorage.getItem(this.getDbName());
+        if (!blob) {
+            return { transactions: [], events: [], deletedTxIds: [] };
         }
-        return JSON.parse(obj);
+
+        try {
+            const dec = decryptData(blob);
+            return JSON.parse(dec);
+        } catch(e) {
+            console.error("Vault Decryption Failed", e);
+            return { transactions: [], events: [], deletedTxIds: [] };
+        }
     }
 
     static save(d) {
-        localStorage.setItem(this.getDbName(), JSON.stringify(d));
+        if (!d || !localStorage.getItem('userEmail')) return;
+        const blob = encryptData(JSON.stringify(d));
+        localStorage.setItem(this.getDbName(), blob);
+        
+        // Silent background sync
+        if (typeof serverCall !== 'undefined') {
+            serverCall('saveVault', localStorage.getItem('userEmail'), blob).catch(e => {
+                console.warn("Cloud Sync Failed. Saving to Virtual DB (local).");
+            });
+        }
     }
 
     static addTransaction(tx) {
         let d = this.data;
-        tx.synced = false;
         tx.id = tx.id || 'loc_' + Date.now() + Math.random().toString(36).substr(2);
         
-        // Encryption Layer
-        tx.amount = encryptData(tx.amount);
-        tx.category = encryptData(tx.category);
-        tx.notes = encryptData(tx.notes);
-        tx.method = encryptData(tx.method);
-        tx.eventName = encryptData(tx.eventName);
-
+        // We no longer encrypt fields individually because the WHOLE BLOB is encrypted on save
         let idx = d.transactions.findIndex(t => t.id === tx.id);
         if (idx > -1) d.transactions[idx] = tx;
         else d.transactions.push(tx);
@@ -42,14 +50,8 @@ class DB {
     }
 
     static getTransactions() {
-        return this.data.transactions.map(tx => ({
-            ...tx,
-            amount: Number(decryptData(tx.amount)),
-            category: decryptData(tx.category),
-            notes: decryptData(tx.notes),
-            method: decryptData(tx.method),
-            eventName: decryptData(tx.eventName)
-        }));
+        // Return clear-text for the UI to render
+        return this.data.transactions;
     }
 
     static computeSummary(timeFrame = 'Day') {
