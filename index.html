@@ -4,11 +4,11 @@
   <base target="_top">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
   <title>PaisaFlow - Elite Financial Vault</title>
-  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-  <link rel="icon" type="image/png" href="assets/img/logo.png">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="icon" type="image/png" href="assets/img/logo.png">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
-  <link href="css/styles.css" rel="stylesheet">
+  <link href="css/styles.css?v=3.0" rel="stylesheet">
   <style>
     body { background: #060b13; color: white; margin: 0; overflow: hidden; height: 100vh; display: flex; align-items: center; justify-content: center; }
     
@@ -65,7 +65,7 @@
   <div id="onboarding-container">
     <!-- Slide 1 -->
     <div class="onboard-slide active" id="slide-1">
-      <span class="material-icons onboard-img">security</span>
+      <i class="fa-solid fa-shield-halved onboard-img"></i>
       <h2 class="onboard-title">Bank-Grade Security</h2>
       <p class="onboard-desc">End-to-end encryption for your private transactions. Your data stays in your vault.</p>
       <div class="onboard-btn-container">
@@ -76,7 +76,7 @@
 
     <!-- Slide 2 -->
     <div class="onboard-slide" id="slide-2">
-      <span class="material-icons onboard-img">insights</span>
+      <i class="fa-solid fa-chart-line onboard-img"></i>
       <h2 class="onboard-title">Elite Analytics</h2>
       <p class="onboard-desc">Track every penny with Day, Week, and Month insights. Visualize your growth.</p>
       <div class="onboard-btn-container">
@@ -87,7 +87,7 @@
 
     <!-- Slide 3 -->
     <div class="onboard-slide" id="slide-3">
-      <span class="material-icons onboard-img">cloud_done</span>
+      <i class="fa-solid fa-cloud-arrow-up onboard-img"></i>
       <h2 class="onboard-title">Cloud Mastery</h2>
       <p class="onboard-desc">Seamlessly sync with your Google Sheets ledger. Private, fast, and permanent.</p>
       <div class="onboard-btn-container">
@@ -136,7 +136,7 @@
         <div class="form-group" style="margin-bottom:30px;"><label>Private Key (PIN)</label><input type="password" id="auth-password" required placeholder="••••••••"></div>
         <div class="verify-slider" id="auth-slider">
           <div class="verify-text" id="auth-slider-text">Authorize Entrance</div>
-          <div class="verify-thumb" id="auth-slider-thumb"><span class="material-icons">chevron_right</span></div>
+          <div class="verify-thumb" id="auth-slider-thumb"><i class="fa-solid fa-chevron-right"></i></div>
         </div>
       </form>
 

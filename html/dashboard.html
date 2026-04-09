@@ -5,10 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>PaisaFlow - Premium Vault</title>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="icon" type="image/png" href="../assets/img/logo.png">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
-    <link href="../css/styles.css" rel="stylesheet">
+    <link href="../css/styles.css?v=3.0" rel="stylesheet">
     <script src="../js/security.js"></script>
     <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
   </head>
@@ -27,8 +27,8 @@
               </div>
           </div>
           <div style="display:flex; gap:8px;">
-            <button class="arrow-btn" onclick="syncToSheets()" style="flex-shrink:0;"><span class="material-icons">sync</span></button>
-            <button class="arrow-btn" onclick="logout()" style="flex-shrink:0; background:rgba(244,63,94,0.1); border-color:rgba(244,63,94,0.2);"><span class="material-icons" style="color:#f43f5e">power_settings_new</span></button>
+            <button class="arrow-btn" onclick="syncToSheets()" style="flex-shrink:0;"><i class="fa-solid fa-rotate"></i></button>
+            <button class="arrow-btn" onclick="logout()" style="flex-shrink:0; background:rgba(244,63,94,0.1); border-color:rgba(244,63,94,0.2);"><i class="fa-solid fa-power-off" style="color:#f43f5e"></i></button>
           </div>
       </div>
     </div>
@@ -57,76 +57,139 @@
         <div class="modal glass" style="width:100%; height:90%; border-radius:36px 36px 0 0; border-bottom:none; padding:32px;">
             <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:24px;">
                 <h2 style="margin:0; font-weight:800;">Ledger Central</h2>
-                <button class="arrow-btn" onclick="closeLedger()"><span class="material-icons">close</span></button>
+                <button class="arrow-btn" onclick="closeLedger()"><i class="fa-solid fa-xmark"></i></button>
             </div>
             <div id="ledger-content" style="overflow-y:auto; height:calc(100% - 60px);"></div>
         </div>
     </div>
 
-    <!-- BOTTOM TAB BAR (ELITE REBUILD) -->
-    <div class="navbar">
-        <div class="nav-item active" id="nav-home" onclick="closeAllOverlays()">
-           <span class="material-icons">grid_view</span>
-           <span>Grid View</span>
-        </div>
-        <div class="nav-item" id="nav-ledger" onclick="openLedger()">
-           <span class="material-icons">account_balance_wallet</span>
-           <span>Account</span>
+    <!-- FLOATING PILL NAVBAR (REBUILT 3.0) -->
+    <div class="navbar-container">
+        <div class="navbar">
+            <div class="nav-item active" id="nav-home" onclick="showView('home')">
+               <i class="fa-solid fa-layer-group"></i>
+               <span>Grid</span>
+            </div>
+            <div class="nav-item" id="nav-ledger" onclick="showView('ledger')">
+               <i class="fa-solid fa-vault"></i>
+               <span>Ledger</span>
+            </div>
+            
+            <div style="width: 70px;"></div> <!-- Center Gap for FAB -->
+            
+            <div class="nav-item" id="nav-events" onclick="showView('balance')">
+               <i class="fa-solid fa-chart-pie"></i>
+               <span>Balance</span>
+            </div>
+            <div class="nav-item" id="nav-elite" onclick="showView('profile')">
+               <i class="fa-solid fa-crown"></i>
+               <span>Elite</span>
+            </div>
         </div>
         
-        <!-- CENTER GAP FOR FAB DOCK -->
-        <div style="flex: 0.8;"></div> 
-        
-        <div class="nav-item" id="nav-events" onclick="switchTab('events', this)">
-           <span class="material-icons">auto_awesome</span>
-           <span>Balance</span>
+        <!-- HYPER-FAB -->
+        <div class="fab-container">
+            <button class="fab" onclick="openAddModal()">
+                <i class="fa-solid fa-plus"></i>
+            </button>
         </div>
-        <div class="nav-item" id="nav-elite">
-           <span class="material-icons">workspace_premium</span>
-           <span>Elite</span>
-        </div>
-    </div>
-
-    <!-- Floating Action Button -->
-    <div class="fab-container">
-        <button class="fab" onclick="openAddModal()">
-           <span class="material-icons" style="font-size: 32px;">add</span>
-        </button>
     </div>
 
     <!-- MODALS (SAME AS BEFORE) -->
     <div class="modal-overlay" id="add-modal">
        <div class="modal glass" style="max-width:440px; border-radius:32px; padding:32px;">
-          <h2 style="margin:0 0 24px; font-weight:800;">Entry</h2>
-          <form id="transaction-form" onsubmit="submitTransaction(event)">
-             <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-bottom:16px;">
-                <div class="form-group"><label>Type</label><select id="tx-type" name="type" required><option value="Expense">Expense</option><option value="Income">Income</option></select></div>
-                <div class="form-group"><label>Date</label><input type="date" id="tx-date" name="date" required></div>
-             </div>
-             <div class="form-group" style="margin-bottom:24px;">
-                <label>Amount</label>
-                <input type="number" id="tx-amount" name="amount" required step="0.01" style="font-size:32px; font-weight:800; color:var(--accent-color);">
-             </div>
-             <div class="form-group" style="margin-bottom:16px;">
-                <label>Category</label>
-                <select id="tx-category" name="category" required>
-                   <option value="Food 🍔">Food 🍔</option>
-                   <option value="Travel 🚗">Travel 🚗</option>
-                   <option value="Bills 💡">Bills 💡</option>
-                   <option value="Shopping 🛍️">Shopping 🛍️</option>
-                   <option value="Salary 🏦">Salary 🏦</option>
-                   <option value="Other 📌">Other 📌</option>
-                </select>
-             </div>
-             <div style="display:flex; gap:12px;">
-                <button type="button" class="pill-btn" onclick="closeAddModal()" style="background:rgba(255,255,255,0.05);">Dismiss</button>
-                <button type="submit" class="pill-btn highlight" style="flex:1;">Submit</button>
-             </div>
-          </form>
-       </div>
+    <!-- LEDGER & EVENTS (FULLSCREEN MODALS) -->
+    <div id="ledger-overlay" class="modal-overlay" style="align-items: flex-end; padding:0;">
+        <div class="modal glass" style="width:100%; height:90%; border-radius:36px 36px 0 0; border-bottom:none; padding:32px;">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:24px;">
+                <div>
+                   <h2 style="margin:0; font-weight:800;">Accounts Ledger</h2>
+                   <p style="margin:4px 0 0; font-size:11px; opacity:0.5; font-weight:700; text-transform:uppercase;">Income & Expenditure Account</p>
+                </div>
+                <button class="arrow-btn" onclick="showView('home')"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div id="ledger-content" style="overflow-y:auto; height:calc(100% - 60px);"></div>
+        </div>
     </div>
 
-       </div>
+    <!-- BALANCE/EVENTS OVERLAY -->
+    <div id="balance-overlay" class="modal-overlay" style="align-items: flex-end; padding:0;">
+        <div class="modal glass" style="width:100%; height:90%; border-radius:36px 36px 0 0; border-bottom:none; padding:32px;">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:24px;">
+                <h2 style="margin:0; font-weight:800;">Balance Insights</h2>
+                <button class="arrow-btn" onclick="showView('home')"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div id="balance-content" style="overflow-y:auto; height:calc(100% - 60px);">
+                <!-- Analytics content injected via JS -->
+            </div>
+        </div>
+    </div>
+
+    <!-- ELITE PROFILE OVERLAY -->
+    <div id="profile-overlay" class="modal-overlay" style="align-items: flex-end; padding:0;">
+        <div class="modal glass" style="width:100%; height:90%; border-radius:36px 36px 0 0; border-bottom:none; padding:32px;">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:24px;">
+                <h2 style="margin:0; font-weight:800;">Elite Profile</h2>
+                <button class="arrow-btn" onclick="showView('home')"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div id="profile-content" style="overflow-y:auto; height:calc(100% - 60px);">
+                <!-- Profile details injected via JS -->
+            </div>
+        </div>
+    </div>
+
+    <!-- ELITE ADD MODAL (CALCULATION READY) -->
+    <div id="add-modal" class="modal-overlay">
+        <div class="modal glass" style="width: 100%; max-width: 400px; margin: 16px; border-radius: 32px; padding: 24px;">
+           <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
+               <h2 style="margin:0; font-weight:800; font-size:22px;">Vault Entry</h2>
+               <button class="arrow-btn" onclick="closeAddModal()"><i class="fa-solid fa-xmark"></i></button>
+           </div>
+           
+           <form onsubmit="submitTransaction(event)">
+              <div class="form-group" style="margin-bottom:20px;">
+                 <label>Entry Type</label>
+                 <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px; background:rgba(255,255,255,0.03); padding:4px; border-radius:12px;">
+                    <label style="margin:0; padding:10px; text-align:center; cursor:pointer;">
+                        <input type="radio" name="type" value="Expense" checked style="display:none;">
+                        <span style="font-size:12px; font-weight:800; opacity:0.6;">Expense</span>
+                    </label>
+                    <label style="margin:0; padding:10px; text-align:center; cursor:pointer;">
+                        <input type="radio" name="type" value="Income" style="display:none;">
+                        <span style="font-size:12px; font-weight:800; opacity:0.6;">Income</span>
+                    </label>
+                 </div>
+              </div>
+
+              <div class="form-group" style="margin-bottom:20px;">
+                 <label>Amount / Calculation</label>
+                 <div style="position:relative;">
+                    <input type="text" id="tx-amount" name="amount" required placeholder="0.00" style="font-size:24px; font-weight:800; padding-left:45px;">
+                    <span style="position:absolute; left:16px; top:50%; transform:translateY(-50%); font-size:20px; font-weight:800; opacity:0.3;" class="cur-symbol">₹</span>
+                 </div>
+              </div>
+
+              <div class="form-group" style="margin-bottom:20px;">
+                 <label>Category</label>
+                 <select name="category" required>
+                    <option value="Food 🍔">Food 🍔</option>
+                    <option value="Travel 🚗">Travel 🚗</option>
+                    <option value="Bills 💡">Bills 💡</option>
+                    <option value="Shopping 🛍️">Shopping 🛍️</option>
+                    <option value="Salary 🏦">Salary 🏦</option>
+                    <option value="Investment 📈">Investment 📈</option>
+                    <option value="Other 📌">Other 📌</option>
+                 </select>
+              </div>
+
+              <div class="form-group" style="margin-bottom:24px;">
+                 <label>Date</label>
+                 <input type="date" id="tx-date" name="date" required>
+              </div>
+
+              <button type="submit" class="pill-btn highlight" style="height:54px; font-size:16px;">Secure Transmission</button>
+           </form>
+        </div>
     </div>
 
     <!-- FAREWELL OVERLAY (ENCOURAGING) -->

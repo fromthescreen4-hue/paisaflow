@@ -174,7 +174,7 @@ function initAuthSlider() {
         
         if (currentPos >= this._maxTrack * 0.9) {
             thumb.style.left = (this._maxTrack + 5) + 'px';
-            thumb.innerHTML = '<span class="material-icons">check</span>';
+            thumb.innerHTML = '<i class="fa-solid fa-check"></i>';
             handleAuthSubmit();
         } else {
             resetSlider();
@@ -194,6 +194,6 @@ function resetSlider() {
     if (thumb) {
         thumb.style.transition = 'left 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275)';
         thumb.style.left = '5px';
-        thumb.innerHTML = '<span class="material-icons">chevron_right</span>';
+        thumb.innerHTML = '<i class="fa-solid fa-chevron-right"></i>';
     }
 }

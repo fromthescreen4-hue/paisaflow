@@ -124,7 +124,7 @@ class UI {
                     </div>
                 </div>
                 <div class="card glass" style="margin-top:20px; display:flex; align-items:center; gap:15px; padding:20px;">
-                    <div style="background:rgba(0,224,117,0.1); color:var(--accent-color); padding:10px; border-radius:12px;"><span class="material-icons">trending_up</span></div>
+                    <div style="background:rgba(139, 92, 246, 0.1); color:var(--accent-color); padding:10px; border-radius:12px;"><i class="fa-solid fa-fire-flame-curved"></i></div>
                     <div>
                         <p style="margin:0; font-size:10px; opacity:0.5; font-weight:800;">TOP CATEGORY</p>
                         <h4 style="margin:0; font-size:16px;">${this.getTopCategory(stats.categories)}</h4>
@@ -148,6 +148,28 @@ class UI {
              const rate = stats.totalIncome > 0 ? Math.floor((savings / stats.totalIncome) * 100) : 0;
              content = `
                 <div class="view-header">
+                    <span class="view-date">Full Cycle</span>
+                    <h2 class="view-title">Budget Ledger</h2>
+                </div>
+                <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-bottom:20px;">
+                    <div class="stat-card glass highlight" style="background:rgba(16,185,129,0.1);">
+                        <span style="font-size:10px; font-weight:800; opacity:0.6;">SAVED</span>
+                        <strong style="font-size:24px; display:block; color:#10b981;">${cur}${savings.toLocaleString()}</strong>
+                    </div>
+                    <div class="stat-card glass">
+                        <span style="font-size:10px; font-weight:800; opacity:0.6;">RATE</span>
+                        <strong style="font-size:24px; display:block;">${rate}%</strong>
+                    </div>
+                </div>
+                <div class="stat-card glass" style="padding:24px; display:flex; justify-content:space-between; align-items:center;">
+                    <div>
+                        <p style="margin:0; font-size:11px; opacity:0.5; font-weight:800;">TOTAL INCOME</p>
+                        <h3 style="margin:4px 0 0; font-size:20px;">${cur}${stats.totalIncome.toLocaleString()}</h3>
+                    </div>
+                    <i class="fa-solid fa-arrow-trend-up" style="font-size:24px; opacity:0.2;"></i>
+                </div>
+            `;
+        }
                     <span class="view-date">${new Date().toLocaleDateString('en-US', {month: 'long'})} Snapshot</span>
                     <h2 class="view-title">Financial Health</h2>
                 </div>
@@ -209,9 +231,15 @@ class UI {
         const bio = profile.bio || 'Elite Digital Vault 2.0';
 
         const container = document.getElementById('profile-container');
-                    ${name.charAt(0).toUpperCase()}
-                </div>`;
+        if (container) {
+            container.innerHTML = `<div class="avatar-fallback glass" style="background:rgba(139,92,246,0.1); color:var(--accent-color); font-size:24px; display:flex; align-items:center; justify-content:center; width:44px; height:44px; border-radius:50%;">${avatar}</div>`;
         }
+        
+        const nameEl = document.getElementById('display-name');
+        if (nameEl) nameEl.innerText = name;
+        
+        const bioEl = document.getElementById('display-email');
+        if (bioEl) bioEl.innerText = bio;
     }
 
     static renderLedger() {

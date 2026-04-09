@@ -61,23 +61,45 @@ function jumpToPage(index) {
     }
 }
 
-/* OVERLAY MANAGEMENT */
-function openLedger() {
-    document.getElementById('ledger-overlay').style.display = 'flex';
-    document.getElementById('nav-ledger').classList.add('active');
-    document.getElementById('nav-home').classList.remove('active');
-    UI.renderLedger();
-}
+/* SEAMLESS NAVIGATION ENGINE */
+function showView(target) {
+    const overlays = ['ledger-overlay', 'balance-overlay', 'profile-overlay'];
+    const navItems = {
+        'home': 'nav-home',
+        'ledger': 'nav-ledger',
+        'balance': 'nav-events',
+        'profile': 'nav-elite'
+    };
 
-function closeLedger() {
-    document.getElementById('ledger-overlay').style.display = 'none';
-    document.getElementById('nav-ledger').classList.remove('active');
-    document.getElementById('nav-home').classList.add('active');
-}
+    // 1. Hide all overlays
+    overlays.forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.style.display = 'none';
+    });
 
-function closeAllOverlays() {
-    closeLedger();
-    document.querySelectorAll('.modal-overlay').forEach(m => m.style.display = 'none');
+    // 2. Reset nav active states
+    document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('active'));
+
+    // 3. Activate target
+    if (target === 'home') {
+        document.getElementById('nav-home').classList.add('active');
+    } else {
+        const overlayId = target === 'ledger' ? 'ledger-overlay' : 
+                          target === 'balance' ? 'balance-overlay' : 'profile-overlay';
+        const modal = document.getElementById(overlayId);
+        if (modal) modal.style.display = 'flex';
+        
+        const navId = navItems[target];
+        if (navId) document.getElementById(navId).classList.add('active');
+        
+        // Render specific content
+        if (target === 'ledger') UI.renderLedger();
+        if (target === 'profile') UI.renderAvatar(); // Re-renders profile info into overlay
+        if (target === 'balance') console.log("Balance Analytics triggered...");
+    }
+
+    // Haptic confirmation
+    if (window.navigator && window.navigator.vibrate) window.navigator.vibrate(12);
 }
 
 function openAddModal() { document.getElementById('add-modal').style.display = 'flex'; }
@@ -86,19 +108,27 @@ function closeAddModal() { document.getElementById('add-modal').style.display = 
 /* TRANSACTION LOGIC */
 async function submitTransaction(e) {
     e.preventDefault();
-    const data = Object.fromEntries(new FormData(e.target).entries());
+    const formData = new FormData(e.target);
+    const data = Object.fromEntries(formData.entries());
     
+    // Smart Calculator Integration
+    try {
+        let amountRaw = data.amount.replace(/[^0-9\.\+\-\*\/\(\)]/g, '');
+        const calcValue = Function('"use strict";return (' + amountRaw + ')')();
+        data.amount = parseFloat(calcValue) || 0;
+    } catch(err) {
+        alert("Invalid calculation. Please check your math.");
+        return;
+    }
+
     if (typeof DB !== 'undefined') {
         DB.addTransaction(data);
         e.target.reset();
-        document.getElementById('tx-date').valueAsDate = new Date();
+        const dateInp = document.getElementById('tx-date');
+        if (dateInp) dateInp.valueAsDate = new Date();
         closeAddModal();
         refreshUI();
-        
-        // Haptic feedback
         if (window.navigator && window.navigator.vibrate) window.navigator.vibrate(50);
-        
-        // Final background sync (silent)
         try { await serverCall('syncTransactions', DB.data.transactions); } catch(e) {}
     }
 }
@@ -113,13 +143,11 @@ function syncToSheets() {
 }
 
 function logout() {
-    if (confirm("Sign out of the Elite Vault? Your encrypted cloud data is safe, but your secondary local key will be purged.")) {
-        document.getElementById('logout-overlay').style.display = 'flex';
+    if (confirm("Sign out of the Elite Vault?")) {
+        const overlay = document.getElementById('logout-overlay');
+        if (overlay) overlay.style.display = 'flex';
         localStorage.clear();
-        sessionStorage.clear();
-        setTimeout(() => {
-            window.location.href = '../index.html';
-        }, 2500);
+        setTimeout(() => window.location.href = '../index.html', 2500);
     }
 }
 
