@@ -1,7 +1,7 @@
 // js/api.js
 
-window.APP_NAME = "Paisa Flow";
-window.APP_VERSION = "V5 Mint";
+window.APP_NAME = "PaisaFlow";
+window.APP_VERSION = "2.0 Production";
 
 document.addEventListener('DOMContentLoaded', () => {
     // Dynamically inject text everywhere to sync versions perfectly
@@ -10,7 +10,7 @@ document.addEventListener('DOMContentLoaded', () => {
     document.querySelectorAll('.app-version-display').forEach(el => el.innerText = window.APP_VERSION);
 });
 
-window.WEB_APP_URL = "https://script.google.com/macros/s/AKfycbxZIRXyLoRVdRXEcYBE5GvGwYWdhax9-Aa6ztFWRjxu0BvkxObAfoNJ2WtYNi0p1Aw_/exec";
+window.WEB_APP_URL = "https://script.google.com/macros/s/AKfycbyTHCJPfyA8B3i0bteZhtlgPs8uUNz9RVdEuWe6qZdQDeigREq4tLPVK5t38bk20zPQ/exec";
 
 async function serverCall(methodName, ...args) {
     if (!window.WEB_APP_URL) throw new Error("Missing WEB_APP_URL.");
@@ -57,6 +57,11 @@ function encryptData(text) {
     return CryptoJS.AES.encrypt(String(text), key).toString();
 }
 
+function hashPassword(pass) {
+    if(!pass) return "";
+    return CryptoJS.SHA256(pass).toString();
+}
+
 function decryptData(cipher) {
     if(!cipher) return "";
     const key = getVaultKey();
@@ -64,7 +69,7 @@ function decryptData(cipher) {
     try {
         const bytes = CryptoJS.AES.decrypt(cipher, key);
         const originalText = bytes.toString(CryptoJS.enc.Utf8);
-        return originalText || cipher; // Return cipher if decryption fails (e.g. wrong key/not encrypted yet)
+        return originalText || cipher; 
     } catch(e) {
         return cipher;
     }

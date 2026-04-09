@@ -1,344 +1,195 @@
 <!DOCTYPE html>
 <html>
-
 <head>
   <base target="_top">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Paisa Flow - V5 Mint</title>
-  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <title>PaisaFlow - Elite Financial Vault</title>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
   <link rel="icon" type="image/png" href="assets/img/logo.png">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
   <link href="css/styles.css" rel="stylesheet">
   <style>
-    /* Slider Styles */
-    #onboarding-container {
-      display: none;
-      flex-direction: column;
-      width: 100%;
-      max-width: 800px;
-      height: 100vh;
-      padding: 20px;
-      box-sizing: border-box;
-      justify-content: center;
-    }
-
-    .slider {
-      position: relative;
-      height: 350px;
-      overflow: hidden;
-      background: var(--surface-color);
-      border-radius: 20px;
-      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
-    }
-
-    .slide {
-      position: absolute;
-      width: 100%;
-      height: 100%;
-      text-align: center;
-      padding: 40px;
-      box-sizing: border-box;
-      display: none;
-      animation: fade 0.5s ease-in-out;
-    }
-
-    .slide.active {
-      display: block;
-    }
-
-    .slide i {
-      font-size: 64px;
-      color: var(--primary-color);
-      margin-bottom: 20px;
-    }
-
-    @keyframes fade {
-      from {
-        opacity: 0;
-        transform: translateX(20px);
-      }
-
-      to {
-        opacity: 1;
-        transform: translateX(0);
-      }
-    }
-
-    .slider-controls {
-      display: flex;
-      justify-content: space-between;
-      margin-top: 20px;
-    }
-
-    .bottom-links {
-      display: flex;
-      justify-content: center;
-      gap: 20px;
-      margin-top: 40px;
-    }
-
-    .bottom-links a {
-      color: var(--secondary-color);
-      text-decoration: none;
-      font-weight: 600;
-    }
-
-    /* Splash */
+    body { background: #060b13; color: white; margin: 0; overflow: hidden; height: 100vh; display: flex; align-items: center; justify-content: center; }
+    
+    /* SPLASH SCREEN */
     #splash-screen {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: #ffffff;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      z-index: 9999;
-      transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+      position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+      background: #060b13; z-index: 9999; display: flex; flex-direction: column;
+      align-items: center; justify-content: center; transition: opacity 0.8s ease;
     }
+    .splash-logo { width: 100px; animation: pulse 2s infinite ease-in-out; }
+    @keyframes pulse { 0%, 100% { transform: scale(1); opacity: 0.8; } 50% { transform: scale(1.1); opacity: 1; } }
 
-    .splash-logo-container {
-      animation: logoIntro 1.2s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
-      opacity: 0;
-      transform: scale(0.5);
-    }
-
-    @keyframes logoIntro {
-      to {
-        opacity: 1;
-        transform: scale(1);
-      }
-    }
-
-    .logo-shimmer {
-      position: relative;
-      overflow: hidden;
-    }
-
-    .logo-shimmer::after {
-      content: "";
-      position: absolute;
-      top: 0;
-      left: -100%;
-      width: 50%;
-      height: 100%;
-      background: linear-gradient(to right, transparent, rgba(255, 255, 255, 0.4), transparent);
-      transform: skewX(-25deg);
-      animation: shimmer 2s infinite;
-    }
-
-    @keyframes shimmer {
-      100% {
-        left: 200%;
-      }
-    }
-
-    .splash-glow {
-      position: absolute;
-      width: 300px;
-      height: 300px;
-      background: radial-gradient(circle, rgba(45, 212, 191, 0.15) 0%, rgba(255, 255, 255, 0) 70%);
-      animation: glowPulse 4s infinite ease-in-out;
-    }
-
-    @keyframes glowPulse {
-
-      0%,
-      100% {
-        transform: scale(1);
-        opacity: 0.15;
-      }
-
-      50% {
-        transform: scale(1.3);
-        opacity: 0.25;
-      }
-    }
-
-    /* Auth Card Enhancements */
+    /* ONBOARDING */
     #onboarding-container {
-      background: radial-gradient(circle at center, #ffffff 0%, #f1f5f9 100%);
+      position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+      background: #060b13; z-index: 9998; display: none; flex-direction: column;
+      align-items: center; justify-content: center;
+      padding: 40px 24px; transition: transform 0.6s var(--ease-premium);
     }
+    .onboard-slide { display: none; flex-direction: column; align-items: center; text-align: center; width: 100%; max-width: 400px; }
+    .onboard-slide.active { display: flex; animation: slideIn 0.6s var(--ease-premium); }
+    @keyframes slideIn { from { opacity: 0; transform: translateY(20px); } }
+    .onboard-img { font-size: 80px; margin-bottom: 30px; color: var(--accent-color); filter: drop-shadow(0 0 20px rgba(139,92,246,0.3)); }
+    .onboard-title { font-size: 36px; font-weight: 800; margin-bottom: 16px; letter-spacing: -1px; }
+    .onboard-desc { font-size: 16px; opacity: 0.5; line-height: 1.6; margin-bottom: 40px; }
 
+    /* AUTH CARD */
     .auth-card {
-      background: rgba(255, 255, 255, 0.7) !important;
-      backdrop-filter: blur(25px) saturate(180%) !important;
-      border: 1px solid rgba(255, 255, 255, 0.3);
-      padding: 40px !important;
-      border-radius: 28px !important;
-      animation: authEntrance 1s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+      background: rgba(255, 255, 255, 0.03);
+      backdrop-filter: blur(25px);
+      -webkit-backdrop-filter: blur(25px);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      padding: 40px; border-radius: 40px; width: 90%; max-width: 400px;
+      box-shadow: 0 25px 60px rgba(0,0,0,0.5);
+      animation: cardIn 0.8s var(--ease-premium);
     }
+    @keyframes cardIn { from { opacity: 0; transform: translateY(30px); } }
 
-    @keyframes authEntrance {
-      from {
-        opacity: 0;
-        transform: translateY(40px) scale(0.95);
-      }
-
-      to {
-        opacity: 1;
-        transform: translateY(0) scale(1);
-      }
-    }
-
-    .form-group input {
-      transition: all 0.3s ease;
-      background: rgba(255, 255, 255, 0.8) !important;
-      height: 50px !important;
-      border-radius: 12px !important;
-    }
-
-    .pill-btn {
-      padding: 10px 20px;
-      border-radius: 30px;
-      background: white;
-      border: 1px solid var(--border-color);
-      color: var(--text-secondary);
-      text-decoration: none;
-      font-size: 13px;
-      font-weight: 600;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
-    }
-
-    .pill-btn:hover {
-      transform: translateY(-3px) scale(1.05);
-      box-shadow: 0 10px 20px rgba(45, 212, 191, 0.1);
-      border-color: var(--primary-color);
-      color: var(--primary-color);
-    }
-
-    .form-transition-container {
-      overflow: hidden;
-      position: relative;
-    }
-
-    .auth-slide {
-      transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
-    }
+    .verify-slider { height: 60px; background: rgba(255, 255, 255, 0.05); border-radius: 30px; position: relative; margin-top: 30px; display: flex; align-items: center; padding: 0 5px; border: 1px solid rgba(255,255,255,0.08); }
+    .verify-thumb { position: absolute; left: 5px; width: 50px; height: 50px; background: var(--accent-color); border-radius: 25px; display: flex; align-items: center; justify-content: center; color: #0b1d3a; box-shadow: 0 8px 15px rgba(0,224,117,0.3); z-index: 2; transition: left 0.1s; cursor: pointer; }
+    .verify-text { width: 100%; text-align: center; font-size: 14px; font-weight: 700; color: #94a3b8; user-select: none; }
   </style>
 </head>
-
 <body>
 
-  <!-- Splash Screen -->
+  <!-- SPLASH SCREEN -->
   <div id="splash-screen">
-    <div class="splash-logo-container logo-shimmer">
-      <img src="assets/img/logo.png" style="width:140px; filter: drop-shadow(0 20px 40px rgba(0,0,0,0.15));">
-    </div>
-    <div class="splash-glow"></div>
+    <img src="assets/img/logo.png" class="splash-logo">
   </div>
 
-  <!-- Intro / Getting Started Screen -->
-  <div id="intro-screen"
-    style="display:none; flex-direction:column; justify-content:center; align-items:center; height:100vh; padding:30px; text-align:center; background: radial-gradient(circle at top, #ffffff 0%, #dff6f3 100%);">
-    <div style="max-width:400px; animation: fadeUp 1s ease;">
-      <div style="font-size:48px; margin-bottom:30px; color:var(--primary-color);" id="intro-icon">📈</div>
-      <h2 style="font-size:24px; font-weight:800; color:var(--text-primary); margin-bottom:20px;" id="intro-quote">
-        "Wealth begins with awareness."</h2>
-      <p style="color:var(--text-secondary); line-height:1.6; font-size:16px; margin-bottom:40px;">Manage your capital
-        with the precision of a master leger. Paisa Flow offers private, manual-entry tracking for those who value total
-        financial control.</p>
-      <button onclick="showAuthPortal()"
-        style="height:60px; border-radius:30px; font-size:18px; box-shadow: 0 10px 20px rgba(45, 212, 191, 0.3);">Begin
-        My Journey</button>
-    </div>
-  </div>
-
-  <!-- Main Container (Auth Portal) -->
-  <div id="onboarding-container"
-    style="display:none; flex-direction:column; justify-content:center; align-items:center; min-height: 100vh; padding:24px; box-sizing: border-box;">
-
-    <div class="premium-bg"></div>
-
-    <!-- AUTH BOX -->
-    <div id="auth-section" style="width:100%; max-width:440px;">
-      <div class="auth-card">
-        <div style="text-align: center; margin-bottom: 32px;">
-          <img src="assets/img/logo.png" style="width:72px; filter: drop-shadow(0 15px 25px rgba(0,0,0,0.1));">
-        </div>
-
-        <div id="auth-header-content">
-          <h2 id="auth-title"
-            style="text-align:center; font-weight:800; color:var(--text-primary); margin-bottom: 8px;">Welcome to Paisa
-            Flow</h2>
-          <p id="auth-subtitle"
-            style="text-align:center; color:var(--text-secondary); font-size:14px; margin-bottom: 24px;">Sign in to
-            continue</p>
-        </div>
-
-        <div class="form-transition-container">
-          <form id="auth-form" class="auth-slide">
-            <div id="signup-form-group" style="display:none; animation: fadeUp 0.4s ease;">
-              <div class="form-group"><label>Nominal Name</label><input type="text" id="auth-name"
-                  placeholder="E.g. Alexander Hamilton"></div>
-            </div>
-
-            <div class="form-group">
-              <label id="label-email">Email Address</label>
-              <input type="email" id="auth-email" required placeholder="name@example.com">
-            </div>
-
-            <div class="form-group">
-              <label id="label-pass">Password</label>
-              <input type="password" id="auth-password" required placeholder="••••••••">
-            </div>
-
-            <div class="verify-slider" id="auth-slider" style="margin-top: 40px;">
-              <div class="verify-text" id="auth-slider-text">Slide to Authorize</div>
-              <div class="verify-thumb" id="auth-slider-thumb">
-                <span class="material-icons">chevron_right</span>
-              </div>
-            </div>
-          </form>
-
-          <div id="otp-verify-group" style="display:none; margin-top:10px; animation: slideUp 0.5s ease;">
-            <div class="form-group" style="text-align:center;">
-              <label
-                style="color:var(--primary-color); font-weight:700; text-transform:uppercase; font-size:12px; letter-spacing:2px; margin-bottom:15px; display:block;">Access
-                Override Code</label>
-              <input type="tel" id="signup-otp" placeholder="000000" maxlength="6" pattern="\d*" inputmode="numeric"
-                style="text-align:center; letter-spacing:12px; font-size:32px; font-weight:800; background:rgba(45,212,191,0.05) !important; border-color:var(--primary-color) !important;"
-                autocomplete="one-time-code">
-            </div>
-            <button onclick="verifyAccessCode()" id="otp-btn"
-              style="height:55px; background:var(--text-primary); color:white;">Unlock Vault</button>
-          </div>
-        </div>
-
-        <div style="text-align:center; margin-top:24px;">
-          <a href="#" id="toggle-auth-btn"
-            style="color:var(--primary-color); text-decoration:none; font-size:14px; font-weight:700; transition:all 0.3s ease;">Don’t
-            have an account? Create Account</a>
-        </div>
-
-        <div style="text-align:center; margin-top:12px;">
-          <a href="#" style="color:var(--text-secondary); text-decoration:none; font-size:13px; font-weight:500;">Forgot
-            Password?</a>
-        </div>
-
-        <div
-          style="display:flex; justify-content:center; gap:15px; border-top:1px solid var(--border-color); padding-top:25px; margin-top:25px;">
-          <a href="html/about.html" class="pill-btn"><span class="material-icons"
-              style="font-size:18px;">description</span> Documentation</a>
-          <a href="html/pricing.html" class="pill-btn"><span class="material-icons"
-              style="font-size:18px;">payments</span> Price</a>
-        </div>
-
-        <div id="auth-msg" class="message-box"></div>
+  <!-- ONBOARDING -->
+  <div id="onboarding-container">
+    <!-- Slide 1 -->
+    <div class="onboard-slide active" id="slide-1">
+      <span class="material-icons onboard-img">security</span>
+      <h2 class="onboard-title">Bank-Grade Security</h2>
+      <p class="onboard-desc">End-to-end encryption for your private transactions. Your data stays in your vault.</p>
+      <div class="onboard-btn-container">
+        <button class="pill-btn onboard-btn-next" onclick="nextSlide()">Continue</button>
+        <button class="pill-btn onboard-btn-secondary" onclick="openAbout()">Read More</button>
       </div>
     </div>
+
+    <!-- Slide 2 -->
+    <div class="onboard-slide" id="slide-2">
+      <span class="material-icons onboard-img">insights</span>
+      <h2 class="onboard-title">Elite Analytics</h2>
+      <p class="onboard-desc">Track every penny with Day, Week, and Month insights. Visualize your growth.</p>
+      <div class="onboard-btn-container">
+        <button class="pill-btn onboard-btn-next" onclick="nextSlide()">Continue</button>
+        <button class="pill-btn onboard-btn-secondary" onclick="openAbout()">Read More</button>
+      </div>
+    </div>
+
+    <!-- Slide 3 -->
+    <div class="onboard-slide" id="slide-3">
+      <span class="material-icons onboard-img">cloud_done</span>
+      <h2 class="onboard-title">Cloud Mastery</h2>
+      <p class="onboard-desc">Seamlessly sync with your Google Sheets ledger. Private, fast, and permanent.</p>
+      <div class="onboard-btn-container">
+        <button class="pill-btn onboard-btn-next" onclick="startAuth()">Get Started</button>
+        <button class="pill-btn onboard-btn-secondary" onclick="openAbout()">Read More</button>
+      </div>
+    </div>
+
+    <div style="display:flex; justify-content:center; gap:12px; margin-top: 40px;" id="onboard-dots">
+      <div style="width:10px; height:4px; border-radius:2px; background:var(--accent-color); transition: 0.3s;"></div>
+      <div style="width:10px; height:4px; border-radius:2px; background:rgba(255,255,255,0.1); transition: 0.3s;"></div>
+      <div style="width:10px; height:4px; border-radius:2px; background:rgba(255,255,255,0.1); transition: 0.3s;"></div>
+    </div>
   </div>
 
-  <!-- Scripts -->
+  <!-- AUTH PORTAL -->
+  <div class="auth-card" id="auth-portal" style="display:none;">
+    <div style="text-align: center; margin-bottom: 32px;">
+      <img src="assets/img/logo.png" style="width:80px; margin-bottom: 20px; filter: drop-shadow(0 15px 25px rgba(0,0,0,0.5));">
+      <h2 style="margin: 0; font-weight: 800; color: #fff; font-size: 28px;" id="auth-title">Welcome</h2>
+      <p style="margin: 8px 0 0; font-size: 14px; color: #94a3b8;" id="auth-subtitle">Verify your identity to proceed</p>
+    </div>
+
+    <div id="auth-form-container">
+      <form id="auth-form" onsubmit="return false">
+        <div id="signup-fields" style="display:none;">
+           <div class="form-group" style="margin-bottom:20px;"><label>Full Name</label><input type="text" id="auth-name" placeholder="Elite Member"></div>
+           <div class="form-group" style="margin-bottom:20px;"><label>Currency</label><select id="auth-currency"><option value="₹">₹ INR</option><option value="$">$ USD</option></select></div>
+        </div>
+        <div class="form-group" style="margin-bottom:20px;"><label>Email</label><input type="email" id="auth-email" required placeholder="name@vault.com"></div>
+        <div class="form-group" style="margin-bottom:30px;"><label>Private Key (PIN)</label><input type="password" id="auth-password" required placeholder="••••••••"></div>
+        <div class="verify-slider" id="auth-slider">
+          <div class="verify-text" id="auth-slider-text">Authorize Entrance</div>
+          <div class="verify-thumb" id="auth-slider-thumb"><span class="material-icons">chevron_right</span></div>
+        </div>
+      </form>
+
+      <div id="otp-verify-group" style="display:none; text-align:center;">
+          <p style="font-size:12px; opacity:0.6; margin-bottom:24px;">Security token dispatched to your email.</p>
+          <input type="text" id="auth-otp" placeholder="••••••" maxlength="6" style="text-align:center; font-size:28px; letter-spacing:10px; font-weight:900; width:100%; margin-bottom:24px;">
+          <button class="pill-btn highlight" onclick="verifyAccessCode()" style="width:100%;">Verify & Enter</button>
+          <button class="pill-btn" onclick="returnToAuth()" style="width:100%; margin-top:20px; background:transparent; font-size:12px; opacity:0.5;">Back to Credentials</button>
+      </div>
+
+      <div style="text-align:center; margin-top:32px;">
+        <a href="#" id="toggle-auth-btn" style="color:#8b5cf6; text-decoration:none; font-size:14px; font-weight:700;">Join the Elite 2.0</a>
+      </div>
+    </div>
+    <div id="auth-msg" style="margin-top:24px; text-align:center; font-size:13px; min-height: 20px;"></div>
+  </div>
+
   <script src="js/api.js"></script>
+  <script src="js/security.js"></script>
+  <script>
+    // In-page Onboarding logic for 2.0
+    setTimeout(() => {
+        const splash = document.getElementById('splash-screen');
+        splash.style.opacity = '0';
+        setTimeout(() => {
+            splash.style.display = 'none';
+            if (!localStorage.getItem('userEmail')) {
+                document.getElementById('onboarding-container').style.display = 'flex';
+                initOnboarding();
+            } else {
+                window.location.href = 'html/dashboard.html';
+            }
+        }, 800);
+    }, 2500);
+
+    let currentSlide = 1;
+    function initOnboarding() {
+        // No longer using container click, buttons handle logic
+    }
+
+    function nextSlide() {
+        if (currentSlide < 3) {
+            document.getElementById(`slide-${currentSlide}`).classList.remove('active');
+            currentSlide++;
+            document.getElementById(`slide-${currentSlide}`).classList.add('active');
+            updateDots(currentSlide);
+        }
+    }
+
+    function openAbout() {
+        window.location.href = 'html/about.html';
+    }
+
+    function updateDots(active) {
+        const dots = document.getElementById('onboard-dots').children;
+        for (let i = 0; i < dots.length; i++) {
+            const isActive = (i + 1 === active);
+            dots[i].style.background = isActive ? 'var(--accent-color)' : 'rgba(255,255,255,0.1)';
+            dots[i].style.width = isActive ? '24px' : '10px';
+        }
+    }
+
+    function startAuth() {
+        document.getElementById('onboarding-container').style.transform = 'translateY(-100%)';
+        setTimeout(() => {
+            document.getElementById('onboarding-container').style.display = 'none';
+            document.getElementById('auth-portal').style.display = 'block';
+        }, 600);
+    }
+  </script>
   <script src="js/auth.js"></script>
 </body>
-
 </html>
