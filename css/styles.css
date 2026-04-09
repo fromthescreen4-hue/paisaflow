@@ -112,9 +112,9 @@ body {
 }
 
 .stat-card.highlight {
-  background: linear-gradient(135deg, var(--accent-color) 0%, #059669 100%);
-  color: var(--bg-color); border: none;
-  box-shadow: 0 20px 40px rgba(0, 224, 117, 0.2);
+  background: linear-gradient(135deg, var(--accent-color) 0%, #4c1d95 100%);
+  color: var(--text-primary); border: none;
+  box-shadow: 0 20px 40px rgba(139, 92, 246, 0.2);
 }
 
 /* SWIPE SYSTEM FOUNDATION */
@@ -154,11 +154,13 @@ body {
 h1, h2, h3, h4 { letter-spacing: -0.5px; }
 
 input, select, textarea {
-  width: 100%; background: rgba(255, 255, 255, 0.05);
-  border: 1px solid var(--border-glass); border-radius: 18px;
+  width: 100%; background: rgba(255, 255, 255, 0.03) !important;
+  border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 18px;
   padding: 16px; color: white; font-size: 16px; transition: 0.3s;
+  backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
 }
-input:focus { border-color: var(--accent-color); background: rgba(255,255,255,0.08); }
+input:focus { border-color: var(--accent-color); background: rgba(255,255,255,0.06) !important; outline: none; }
+::placeholder { color: rgba(255,255,255,0.3); }
 
 .pill-btn {
   padding: 20px 24px; border-radius: 22px; border: none; font-weight: 800;
