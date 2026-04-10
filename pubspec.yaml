@@ -12,6 +12,8 @@ dependencies:
   google_fonts: ^6.1.0
   smooth_page_indicator: ^1.1.0
   http: ^1.1.0
+  web: ^0.5.1
+  webview_flutter: ^4.13.1
 
 dev_dependencies:
   flutter_test:

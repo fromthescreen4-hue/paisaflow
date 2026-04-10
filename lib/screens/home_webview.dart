@@ -1,7 +1,6 @@
-import 'dart:ui' as ui;
-import 'dart:html' as html;
+import 'dart:ui_web' as ui_web;
+import 'package:web/web.dart' as web;
 import 'package:flutter/material.dart';
-import 'error_screen.dart';
 
 class HomeWebView extends StatefulWidget {
   const HomeWebView({super.key});
@@ -23,12 +22,11 @@ class _HomeWebViewState extends State<HomeWebView> {
   }
 
   void _registerIframe() {
-    // Register the iframe element
-    // ignore: undefined_prefixed_name
-    ui.platformViewRegistry.registerViewFactory(
+    // Register the iframe element using the modern ui_web package
+    ui_web.platformViewRegistry.registerViewFactory(
       _viewId,
       (int viewId) {
-        final element = html.IFrameElement()
+        final element = web.HTMLIFrameElement()
           ..src = _url
           ..style.border = 'none'
           ..style.width = '100%'

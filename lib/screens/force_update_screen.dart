@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'dart:html' as html;
+import 'package:web/web.dart' as web;
 
 class ForceUpdateScreen extends StatelessWidget {
   final String updateUrl;
@@ -47,7 +47,7 @@ class ForceUpdateScreen extends StatelessWidget {
                 height: 55,
                 child: ElevatedButton(
                   onPressed: () {
-                    html.window.location.href = updateUrl;
+                    web.window.location.href = updateUrl;
                   },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.blueAccent,
