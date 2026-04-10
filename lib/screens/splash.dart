@@ -16,6 +16,8 @@ class SplashScreen extends StatefulWidget {
 
 class _SplashScreenState extends State<SplashScreen> {
   final StorageService _storageService = StorageService();
+  final String _currentVersion = "1.0.0";
+  final String _configUrl = "https://fromthescreen4-hue.github.io/Payza/config.json";
 
   @override
   void initState() {
@@ -24,23 +26,26 @@ class _SplashScreenState extends State<SplashScreen> {
   }
 
   Future<void> _checkAppStatus() async {
-    // Check for Force Update
     try {
-      // MOCK VERSION CHECK - Point this to a JSON on your GitHub Pages
-      // final response = await http.get(Uri.parse('https://your-github.io/config.json'));
-      // final config = json.decode(response.body);
-      bool forceUpdate = false; // logic: config['min_version'] > current_version
+      final response = await http.get(Uri.parse(_configUrl));
+      if (response.statusCode == 200) {
+        final config = json.decode(response.body);
+        String minVersion = config['min_version'];
+        String updateUrl = config['update_url'];
 
-      if (forceUpdate) {
-        if (!mounted) return;
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (context) => const ForceUpdateScreen(updateUrl: 'https://github.com/')),
-        );
-        return;
+        if (minVersion != _currentVersion) {
+          if (!mounted) return;
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(
+              builder: (context) => ForceUpdateScreen(updateUrl: updateUrl),
+            ),
+          );
+          return;
+        }
       }
     } catch (e) {
-      print('Update check failed: $e');
+      debugPrint('Update check failed: $e');
     }
 
     await Future.delayed(const Duration(seconds: 2));
