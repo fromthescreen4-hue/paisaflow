@@ -6,7 +6,6 @@ import '../services/storage_service.dart';
 import 'onboarding.dart';
 import 'verify_passcode.dart';
 import 'force_update_screen.dart';
-import 'admin_panel.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -17,7 +16,6 @@ class SplashScreen extends StatefulWidget {
 
 class _SplashScreenState extends State<SplashScreen> {
   final StorageService _storageService = StorageService();
-  int _logoTapCount = 0;
 
   @override
   void initState() {
@@ -64,16 +62,6 @@ class _SplashScreenState extends State<SplashScreen> {
     }
   }
 
-  void _onLogoTapped() {
-    _logoTapCount++;
-    if (_logoTapCount >= 5) {
-      Navigator.push(
-        context,
-        MaterialPageRoute(builder: (context) => const AdminPanel()),
-      );
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -82,16 +70,13 @@ class _SplashScreenState extends State<SplashScreen> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            GestureDetector(
-              onTap: _onLogoTapped,
-              child: Text(
-                'Payza',
-                style: GoogleFonts.poppins(
-                  fontSize: 48,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.blueAccent,
-                  letterSpacing: 2,
-                ),
+            Text(
+              'Payza',
+              style: GoogleFonts.poppins(
+                fontSize: 48,
+                fontWeight: FontWeight.bold,
+                color: Colors.blueAccent,
+                letterSpacing: 2,
               ),
             ),
             const SizedBox(height: 20),
